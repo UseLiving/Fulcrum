@@ -612,7 +612,7 @@ const C = { ink: '#0E1014', muted: '#6A7180', line: '#E3E6EB', long: '#0E9F62', 
 /* ---------- config ---------- */
 const JUP = 'https://api.jup.ag';
 const JUP_KEY = '';                       // optional: paste a free key from portal.jup.ag for higher rate limits
-const RPC = 'https://api.mainnet-beta.solana.com';
+const RPC = 'https://solana-rpc.publicnode.com';
 const USDC = { s: 'USDC', mint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', d: 6 };
 const SOLT = { s: 'SOL', mint: 'So11111111111111111111111111111111111111112', d: 9 };
 const MK = [
@@ -786,14 +786,12 @@ const BAL = {}; let balOk = false;
 async function refreshWallet() {
   if (!W.addr) return;
   try {
-    const [lam, a, b] = await Promise.all([
-      rpc('getBalance', [W.addr, { commitment: 'confirmed' }]),
-      rpc('getParsedTokenAccountsByOwner', [W.addr, { programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA' }, { encoding: 'jsonParsed', commitment: 'confirmed' }]),
-      rpc('getParsedTokenAccountsByOwner', [W.addr, { programId: 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb' }, { encoding: 'jsonParsed', commitment: 'confirmed' }]).catch(() => ({ value: [] }))
-    ]);
+    const PK = solanaWeb3.PublicKey, owner = new PK(W.addr), TP = new PK('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'), AP = new PK('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL');
+    const toks = [...MK, USDC], atas = toks.map(m => PK.findProgramAddressSync([owner.toBuffer(), TP.toBuffer(), new PK(m.mint).toBuffer()], AP)[0].toBase58());
+    const r = await rpc('getMultipleAccounts', [[W.addr, ...atas], { encoding: 'jsonParsed', commitment: 'confirmed' }]);
     for (const k in BAL) delete BAL[k];
-    BAL.SOL = lam.value / 1e9;
-    [...a.value, ...b.value].forEach(acc => { const info = acc.account.data.parsed.info, m = BYMINT[info.mint]; if (m && m.s !== 'SOL') BAL[m.s] = (BAL[m.s] || 0) + (+info.tokenAmount.uiAmount || 0); });
+    BAL.SOL = r.value[0] ? r.value[0].lamports / 1e9 : 0;
+    toks.forEach((m, i) => { const acc = r.value[i + 1]; const ta = acc && acc.data && acc.data.parsed && acc.data.parsed.info && acc.data.parsed.info.tokenAmount; BAL[m.s] = ta ? +ta.uiAmountString || 0 : 0; });
     balOk = true;
   } catch (e) { balOk = false; }
   paintBal(); renderDash(); loadLend();
