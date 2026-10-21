@@ -1,0 +1,1055 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tilt</title>
+<meta name="description" content="Buy and sell Solana memecoins at the best price and earn yield on USDC and SOL. Non-custodial, routed through Jupiter.">
+<meta property="og:title" content="Tilt">
+<meta property="og:description" content="Pick a side. Trade Solana memecoins and earn on idle tokens.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Crect width='30' height='30' rx='9' fill='%230E1014'/%3E%3Cpath d='M15 15 L20 23 H10 Z' fill='%23fff'/%3E%3Crect x='5' y='11.5' width='20' height='3' rx='1.5' fill='%23fff' transform='rotate(-12 15 13)'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<style>[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}img{max-width:100%}</style>
+<style>
+/* Layout: one calm column on cool paper. A balance beam is the brand motif: it tilts toward whatever side you pick, from the logo to the hero to the simulator. Color is reserved for meaning: green long, red short, amber lend. Light only, by choice. */
+:root{
+  --paper:#F6F7F9; --surface:#FFFFFF; --ink:#0E1014; --ink-2:#3B414D; --muted:#6A7180; --line:#E3E6EB; --line-2:#EEF0F3;
+  --long:#0E9F62; --long-bg:#E7F6EF; --short:#E0464B; --short-bg:#FCEDEE; --lend:#C98A12; --lend-bg:#FBF3E2;
+  --f-display:"Familjen Grotesk","Helvetica Neue",Arial,sans-serif;
+  --f-body:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"Geist Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --r:14px; --ease:cubic-bezier(.2,.7,.1,1);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:rgba(246,247,249,.86)}
+a{color:inherit}
+button{font:inherit;color:inherit}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;letter-spacing:-.02em;margin:0;text-wrap:balance;line-height:1.02}
+p{margin:0}
+.wrap{max-width:1160px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:6px}
+.L{color:var(--long)} .S{color:var(--short)} .A{color:var(--lend)}
+
+/* nav */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(246,247,249,.86);backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px);border-bottom:1px solid transparent;transition:border-color .3s}
+.nav.scrolled{border-bottom-color:var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:28px;height:64px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--f-display);font-weight:700;font-size:21px;letter-spacing:-.03em}
+.brand svg{width:30px;height:30px}
+.brand .beam{transform-origin:15px 13px;transition:transform .8s var(--ease)}
+.brand:hover .beam{transform:rotate(-14deg)}
+.links{display:flex;gap:24px;font-size:14.5px;color:var(--ink-2)}
+.links a{text-decoration:none;position:relative}
+.links a::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:1.5px;background:var(--ink);transform:scaleX(0);transform-origin:left;transition:transform .35s var(--ease)}
+.links a:hover::after{transform:scaleX(1)}
+.navr{margin-left:auto;display:flex;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:42px;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:500;font-size:14.5px;text-decoration:none;cursor:pointer;transition:transform .2s var(--ease),box-shadow .2s,background .2s,border-color .2s;white-space:nowrap}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 18px -8px rgba(14,16,20,.25)}
+.btn:active{transform:translateY(0)}
+.btn.ink{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.btn.icon{width:42px;padding:0}
+.btn svg{width:16px;height:16px}
+@media (max-width:820px){.links{display:none}}
+@media (max-width:420px){.navr .btn.ghost{display:none}}
+
+/* hero */
+.hero{padding-block:64px 40px;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:56px;align-items:center}
+.hero h1{font-size:clamp(52px,8.4vw,112px);line-height:.92;letter-spacing:-.045em}
+.hero h1 .ln{display:block;overflow:hidden;padding-bottom:.06em}
+.hero h1 .ln span{display:inline-block;animation:rise .9s var(--ease) both}
+.hero h1 .ln:nth-child(2) span{animation-delay:.08s}
+.hero h1 .ln:nth-child(3) span{animation-delay:.16s}
+@keyframes rise{from{transform:translateY(105%)}to{transform:none}}
+.hero .lead{font-size:18.5px;color:var(--ink-2);max-width:46ch;margin-top:26px;animation:fadeup .9s .3s var(--ease) both}
+.hero .ctas{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px;animation:fadeup .9s .4s var(--ease) both}
+.hero .ctas .btn{height:50px;padding:0 24px;font-size:15.5px}
+@keyframes fadeup{from{opacity:.001;transform:translateY(14px)}to{opacity:1;transform:none}}
+.seesaw{margin-top:44px;max-width:420px;animation:fadeup .9s .5s var(--ease) both}
+.seesaw svg{width:100%;height:auto;overflow:visible;display:block}
+.seesaw .bar{transform-origin:210px 40px;transition:transform 1.1s cubic-bezier(.3,1.5,.4,1)}
+.seesaw text{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em}
+@media (max-width:960px){.hero{grid-template-columns:1fr;gap:40px;padding-top:40px}.seesaw{display:none}}
+
+/* trade widget */
+.widget{background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:0 1px 0 rgba(14,16,20,.03),0 30px 60px -30px rgba(14,16,20,.22);padding:20px;animation:fadeup 1s .2s var(--ease) both;min-width:0}
+.w-top{display:flex;align-items:center;gap:12px}
+.pair{display:flex;align-items:center;gap:10px;font-weight:600}
+.tok{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-display);font-weight:700;font-size:13px;color:#fff;flex:none}
+.pair small{display:block;font-weight:400;color:var(--muted);font-size:12.5px}
+.price{margin-left:auto;text-align:right}
+.price b{font-family:var(--f-mono);font-weight:500;font-size:18px;display:block;transition:color .3s}
+.price span{font-family:var(--f-mono);font-size:12.5px}
+.chartbox{position:relative;height:150px;margin:16px -4px 14px}
+.chartbox canvas{width:100%;height:100%;display:block}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--paper);border-radius:12px;padding:4px;position:relative}
+.seg button{position:relative;z-index:1;border:0;background:none;height:40px;border-radius:9px;font-weight:600;cursor:pointer;transition:color .3s}
+.seg .pill{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:9px;background:var(--long);transition:transform .45s var(--ease),background .45s}
+.seg[data-side="short"] .pill{transform:translateX(100%);background:var(--short)}
+.seg button[aria-pressed="true"]{color:#fff}
+.fields{display:grid;gap:12px;margin-top:14px}
+.field{border:1px solid var(--line);border-radius:12px;padding:10px 14px;display:grid;gap:2px;transition:border-color .2s}
+.field:focus-within{border-color:var(--ink)}
+.field label{font-size:12.5px;color:var(--muted);display:flex;justify-content:space-between}
+.field .row{display:flex;align-items:center;gap:8px}
+.field input[type=number]{border:0;outline:0;background:none;font-family:var(--f-mono);font-size:22px;width:100%;min-width:0;padding:0;color:var(--ink)}
+.field input::-webkit-outer-spin-button,.field input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.field input[type=number]{-moz-appearance:textfield}
+.unit{font-family:var(--f-mono);font-size:13px;color:var(--muted);background:var(--paper);padding:3px 8px;border-radius:6px}
+.lev{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:6px}
+.lev button{height:34px;border-radius:8px;border:1px solid var(--line);background:var(--surface);font-family:var(--f-mono);font-size:13.5px;cursor:pointer;transition:all .2s}
+.lev button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.stats{display:grid;gap:8px;margin-top:14px;font-size:14px}
+.stats div{display:flex;justify-content:space-between;gap:10px}
+.stats dt{color:var(--muted)} .stats dd{margin:0;font-family:var(--f-mono)}
+.go{width:100%;height:52px;margin-top:16px;border-radius:12px;border:0;color:#fff;font-weight:600;font-size:15.5px;cursor:pointer;background:var(--long);transition:background .45s,transform .2s}
+.go:hover{transform:translateY(-1px)}
+.go.short{background:var(--short)}
+.wnote{font-size:12px;color:var(--muted);text-align:center;margin-top:10px}
+
+/* ticker */
+.ticker{border-block:1px solid var(--line);background:var(--surface);overflow:hidden;margin-top:24px}
+.ticker .track{display:flex;width:max-content;animation:marq 38s linear infinite}
+.ticker:hover .track{animation-play-state:paused}
+.ticker .it{display:flex;align-items:center;gap:10px;padding:14px 28px;border-right:1px solid var(--line-2);font-size:14px;white-space:nowrap}
+.ticker .it b{font-weight:600}
+@keyframes marq{to{transform:translateX(-50%)}}
+
+/* sections */
+section{padding-block:104px}
+.head{display:grid;gap:14px;max-width:720px;margin-bottom:48px}
+.head h2{font-size:clamp(36px,5.4vw,64px);letter-spacing:-.035em}
+.head p{font-size:18px;color:var(--ink-2);max-width:56ch}
+.rev{animation:none}
+.rev.in{animation:fadeup .8s var(--ease) both}
+
+/* sides */
+.sides{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.side{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:28px;display:grid;gap:18px;position:relative;overflow:hidden;transition:transform .5s var(--ease),box-shadow .5s}
+.side:hover{transform:translateY(-4px);box-shadow:0 24px 50px -30px rgba(14,16,20,.3)}
+.side .tag{display:inline-flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border-radius:999px;width:max-content}
+.side.l .tag{background:var(--long-bg);color:var(--long)} .side.s .tag{background:var(--short-bg);color:var(--short)}
+.side h3{font-size:34px;letter-spacing:-.03em}
+.side p{color:var(--ink-2);max-width:42ch}
+.side canvas{width:100%;height:150px;display:block}
+.side ol{margin:0;padding:0;list-style:none;display:grid;gap:8px;font-size:14.5px}
+.side li{display:grid;grid-template-columns:22px 1fr;gap:8px;color:var(--ink-2)}
+.side li span{font-family:var(--f-mono);color:var(--muted);font-size:13px;padding-top:1px}
+@media (max-width:820px){.sides{grid-template-columns:1fr}}
+
+/* how */
+.flow{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:28px;overflow:hidden}
+.flow svg{width:100%;height:auto;display:block}
+.flow text{font-family:var(--f-body)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
+.step{padding:22px;border-radius:16px;border:1px solid var(--line);background:var(--surface);display:grid;gap:8px;align-content:start}
+.step .n{font-family:var(--f-mono);font-size:12.5px;color:var(--muted)}
+.step h3{font-size:22px}
+.step p{color:var(--ink-2);font-size:15px}
+@media (max-width:820px){.steps{grid-template-columns:1fr}}
+
+/* short explainer */
+.split{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:20px;align-items:stretch}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:28px;min-width:0}
+.timeline{display:grid;gap:0}
+.tl{display:grid;grid-template-columns:28px 1fr;gap:14px;padding-bottom:22px;position:relative}
+.tl::before{content:"";position:absolute;left:13px;top:28px;bottom:0;width:2px;background:var(--line)}
+.tl:last-child{padding-bottom:0}.tl:last-child::before{display:none}
+.tl i{width:28px;height:28px;border-radius:50%;border:2px solid var(--ink);display:grid;place-items:center;font-style:normal;font-family:var(--f-mono);font-size:12px;background:var(--surface)}
+.tl b{display:block;font-weight:600}
+.tl span{color:var(--ink-2);font-size:15px}
+.sim-price{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.big{font-family:var(--f-display);font-weight:600;letter-spacing:-.04em;font-size:clamp(44px,6vw,72px);line-height:1;font-variant-numeric:tabular-nums;transition:color .3s}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:28px;background:none;cursor:pointer;margin:0}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:4px;background:linear-gradient(to right,var(--ink) var(--p,50%),var(--line) var(--p,50%))}
+input[type=range]::-moz-range-track{height:4px;border-radius:4px;background:var(--line)}
+input[type=range]::-moz-range-progress{height:4px;border-radius:4px;background:var(--ink)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--surface);border:2px solid var(--ink);margin-top:-9px;box-shadow:0 2px 6px rgba(14,16,20,.18);transition:transform .2s}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--surface);border:2px solid var(--ink)}
+input[type=range]:active::-webkit-slider-thumb{transform:scale(1.15)}
+.ledger{display:grid;gap:10px;margin-top:22px;font-size:15px}
+.ledger div{display:flex;justify-content:space-between;gap:10px;padding-bottom:10px;border-bottom:1px dashed var(--line)}
+.ledger div:last-child{border:0;padding:0;font-weight:600}
+.ledger dd{margin:0;font-family:var(--f-mono)}
+.warn{margin-top:18px;font-size:14px;color:var(--ink-2);background:var(--paper);border-radius:12px;padding:12px 14px}
+@media (max-width:900px){.split{grid-template-columns:1fr}}
+
+/* earn */
+.tablewrap{background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:620px}
+th{text-align:left;font-weight:500;font-size:13px;color:var(--muted);padding:16px 24px;border-bottom:1px solid var(--line)}
+td{padding:18px 24px;border-bottom:1px solid var(--line-2);font-size:15px;vertical-align:middle}
+tr:last-child td{border-bottom:0}
+tbody tr{transition:background .2s}
+tbody tr:hover{background:var(--paper)}
+td .pair{font-weight:600}
+td.num{font-family:var(--f-mono)}
+.apr{display:inline-flex;align-items:center;gap:8px;font-family:var(--f-mono);color:var(--lend)}
+.util{width:110px;height:6px;border-radius:6px;background:var(--line-2);overflow:hidden;display:inline-block;vertical-align:middle;margin-right:8px}
+.util i{display:block;height:100%;background:var(--lend);border-radius:6px;width:0;transition:width 1.4s var(--ease)}
+td:last-child{text-align:right}
+.foot{font-size:13px;color:var(--muted);margin-top:14px}
+
+/* pnl */
+.pnl{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:20px}
+.ctl{display:grid;gap:6px;margin-bottom:18px}
+.ctl label{display:flex;justify-content:space-between;font-size:14px;color:var(--ink-2)}
+.ctl output{font-family:var(--f-mono);color:var(--ink)}
+.kp{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.kp div{background:var(--paper);border-radius:12px;padding:12px 14px;display:grid;gap:2px;min-width:0}
+.kp span{font-size:12.5px;color:var(--muted)}
+.kp b{font-family:var(--f-mono);font-weight:500;font-size:clamp(15px,2vw,19px);overflow-wrap:anywhere}
+.pchart{width:100%;height:300px;display:block}
+@media (max-width:900px){.pnl{grid-template-columns:1fr}.kp{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* features */
+.feats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.feat{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:24px;display:grid;gap:14px;align-content:start}
+.feat h3{font-size:21px}
+.feat p{color:var(--ink-2);font-size:15px}
+.feat .vis{height:150px;border-radius:12px;background:var(--paper);display:grid;place-items:center;position:relative;overflow:hidden}
+.gauge{width:180px}
+.gauge .needle{transform-origin:90px 90px;transition:transform 1.6s cubic-bezier(.3,1.4,.4,1)}
+.rate{font-family:var(--f-display);font-weight:600;font-size:44px;letter-spacing:-.04em}
+.rate small{font-family:var(--f-mono);font-size:13px;color:var(--muted);letter-spacing:0;display:block;text-align:center}
+.pos{display:grid;gap:6px;width:calc(100% - 28px)}
+.pos div{display:flex;align-items:center;gap:8px;background:var(--surface);border-radius:8px;padding:7px 10px;font-size:13px}
+.pos .chip{font-family:var(--f-mono);font-size:11px;padding:2px 6px;border-radius:5px}
+.pos .v{margin-left:auto;font-family:var(--f-mono)}
+@media (max-width:900px){.feats{grid-template-columns:1fr}}
+
+/* faq */
+.faq{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);gap:40px}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:20px;padding:22px 0;font-size:18px;font-weight:500}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary i{width:22px;height:22px;flex:none;position:relative;margin-top:2px}
+.faq summary i::before,.faq summary i::after{content:"";position:absolute;left:4px;right:4px;top:10px;height:2px;background:var(--ink);border-radius:2px;transition:transform .35s var(--ease)}
+.faq summary i::after{transform:rotate(90deg)}
+.faq details[open] summary i::after{transform:rotate(0)}
+.faq .ans{padding:0 0 22px;color:var(--ink-2);max-width:62ch}
+@media (max-width:820px){.faq{grid-template-columns:1fr;gap:10px}}
+
+/* cta */
+.cta{background:var(--ink);color:var(--surface);border-radius:28px;padding:80px 32px;text-align:center;position:relative;overflow:hidden}
+.cta canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
+.cta>*{position:relative}
+.cta h2{font-size:clamp(40px,6.4vw,84px);letter-spacing:-.04em}
+.cta p{color:#B7BCC6;margin:18px auto 30px;max-width:44ch;font-size:18px}
+.cta .btn{background:var(--surface);color:var(--ink);border-color:var(--surface);height:52px;padding:0 28px;font-size:16px}
+footer{padding-block:56px 64px}
+.fgrid{display:flex;flex-wrap:wrap;gap:24px 48px;align-items:flex-start;justify-content:space-between}
+.flinks{display:flex;gap:22px;flex-wrap:wrap;font-size:14.5px;color:var(--ink-2)}
+.flinks a{text-decoration:none}.flinks a:hover{color:var(--ink)}
+.disc{margin-top:32px;padding-top:24px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);max-width:90ch}
+
+/* live data */
+.pair select{font:inherit;font-weight:600;border:0;background:none;padding:0 18px 0 0;cursor:pointer;color:var(--ink);-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236A7180' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 2px center}
+.nodata[hidden]{display:none!important}
+.nodata{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:12px;font-size:13.5px;color:var(--muted);background:var(--paper);border-radius:12px}
+.nodata button{margin-top:8px}
+.cardmk{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;color:var(--muted)}
+.cardmk span:first-child{font-weight:600;color:var(--ink)}
+.live{display:inline-flex;align-items:center;gap:6px}
+.live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--long);box-shadow:0 0 0 0 rgba(14,159,98,.5);animation:ping 2s infinite}
+@keyframes ping{70%{box-shadow:0 0 0 7px rgba(14,159,98,0)}100%{box-shadow:0 0 0 0 rgba(14,159,98,0)}}
+.pos .empty{justify-content:center;color:var(--muted);text-align:center;padding:14px}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+
+
+.tokimg{width:30px;height:30px;border-radius:50%;flex:none;object-fit:cover;background:var(--line-2)}
+.tokimg.sm{width:22px;height:22px}
+.unitsel{font-family:var(--f-mono);font-size:13px;color:var(--ink);background:var(--paper);border:0;padding:4px 8px;border-radius:6px;cursor:pointer}
+.balink{border:0;background:none;padding:0;font:inherit;font-size:12.5px;color:var(--muted);cursor:pointer}
+.balink:hover{color:var(--ink)}
+.field.ro{background:var(--paper);border-color:transparent}
+.outamt{font-size:22px;font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.apy{font-family:var(--f-mono);color:var(--lend);font-weight:500}
+.acts{display:inline-flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+.go:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.toast a{text-decoration:underline}
+/* wallet modal */
+.modal[hidden]{display:none!important}
+.modal{position:fixed;inset:0;z-index:100;background:rgba(14,16,20,.35);backdrop-filter:blur(6px);display:grid;place-items:center;padding:16px;animation:fadein .25s both}
+@keyframes fadein{from{opacity:0}}
+.sheet{background:var(--surface);border-radius:22px;width:min(420px,100%);padding:24px;box-shadow:0 40px 80px -30px rgba(14,16,20,.5);animation:pop .4s var(--ease) both}
+@keyframes pop{from{transform:translateY(16px) scale(.98);opacity:0}}
+.sheet-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.sheet-h h3{font-size:22px}
+.x{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);cursor:pointer;display:grid;place-items:center}
+.wl{display:grid;gap:8px}
+.wl button,.wl a{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--surface);cursor:pointer;text-decoration:none;font-weight:500;transition:border-color .2s,transform .2s;text-align:left;width:100%}
+.wl button:hover,.wl a:hover{border-color:var(--ink);transform:translateY(-1px)}
+.wl img,.wl .ph{width:32px;height:32px;border-radius:9px;flex:none}
+.wl .ph{display:grid;place-items:center;color:#fff;font-weight:700}
+.wl .st{margin-left:auto;font-size:12.5px;color:var(--muted)}
+.addr{font-family:var(--f-mono);font-size:13px;background:var(--paper);border-radius:10px;padding:10px 12px;word-break:break-all}
+.err{color:var(--short);font-size:14px;min-height:20px;margin-top:10px}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:12px 18px;border-radius:999px;font-size:14px;z-index:120;animation:pop .35s var(--ease) both;max-width:calc(100% - 32px);text-align:center}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001s!important;animation-delay:0s!important;transition-duration:.001s!important}.ticker .track{animation:none}}
+</style>
+</head>
+<body>
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Tilt home">
+      <svg viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="9" fill="#0E1014"/><path d="M15 15 L20 23 H10 Z" fill="#fff"/><g class="beam"><rect x="5" y="11.5" width="20" height="3" rx="1.5" fill="#fff" transform="rotate(-12 15 13)"/></g></svg>
+      Tilt
+    </a>
+    <nav class="links" aria-label="Main">
+      <a href="#trade">Trade</a><a href="#markets-t">Markets</a><a href="#earn">Earn</a><a href="#calc">Calculator</a><a href="#faq">FAQ</a>
+    </nav>
+    <div class="navr">
+      <a class="btn icon ghost" href="https://x.com/" target="_blank" rel="noopener" aria-label="Tilt on X"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+      <button class="btn ink" type="button" data-wallet>Connect wallet</button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap hero">
+    <div>
+      <div class="eyebrow" style="animation:fadeup .8s both">Memecoin markets on Solana</div>
+      <h1 style="margin-top:18px"><span class="ln"><span>Pick</span></span><span class="ln"><span>a side.</span></span></h1>
+      <p class="lead">Buy and sell the memecoins you follow at the best price across Solana, and earn yield on your idle USDC and SOL. Your wallet signs every trade. Tilt never holds your funds.</p>
+      <div class="ctas">
+        <a class="btn ink" href="#trade">Start trading</a>
+        <a class="btn" href="#earn">Earn on your tokens</a>
+      </div>
+      <div class="seesaw" aria-hidden="true">
+        <svg viewBox="0 0 420 92">
+          <g class="bar" id="bar">
+            <rect x="20" y="36" width="380" height="8" rx="4" fill="#0E1014"/>
+            <rect x="28" y="12" width="70" height="24" rx="12" fill="#E7F6EF"/><text x="63" y="28.5" text-anchor="middle" fill="#0E9F62">BUY</text>
+            <rect x="322" y="12" width="70" height="24" rx="12" fill="#FCEDEE"/><text x="357" y="28.5" text-anchor="middle" fill="#E0464B">SELL</text>
+          </g>
+          <path d="M210 44 L232 86 H188 Z" fill="#0E1014"/>
+          <rect x="150" y="86" width="120" height="3" rx="1.5" fill="#E3E6EB"/>
+        </svg>
+      </div>
+    </div>
+
+    <form class="widget" id="trade" onsubmit="return false" aria-label="Trade">
+      <div class="w-top">
+        <div class="pair"><img class="tokimg" id="w-icon" alt=""><div><select id="w-mkt" aria-label="Market"></select><small id="w-sub">Bonk · Solana</small></div></div>
+        <div class="price"><b id="w-price">–</b><span id="w-chg" class="muted">24h –</span></div>
+      </div>
+      <div class="chartbox"><canvas id="w-chart" aria-label="Recent price, 5-minute candles"></canvas><div class="nodata" id="w-nodata">Loading chart…</div></div>
+      <div class="seg" id="seg" data-side="long">
+        <span class="pill" aria-hidden="true"></span>
+        <button type="button" aria-pressed="true" data-side="long">Buy</button>
+        <button type="button" aria-pressed="false" data-side="short">Sell</button>
+      </div>
+      <div class="fields">
+        <div class="field">
+          <label for="w-amt"><span id="w-pay-l">You pay</span><span id="w-bal" class="balink"></span></label>
+          <div class="row"><input type="number" id="w-amt" value="" placeholder="0.00" min="0" step="any" inputmode="decimal"><select class="unitsel" id="w-pay" aria-label="Pay with"><option value="USDC">USDC</option><option value="SOL">SOL</option></select><span class="unit" id="w-sellunit" hidden>BONK</span></div>
+        </div>
+        <div class="field ro">
+          <label><span>You get</span><span id="w-rate"></span></label>
+          <div class="row"><b class="mono outamt" id="w-out">–</b><span class="unit" id="w-outunit">BONK</span></div>
+        </div>
+      </div>
+      <dl class="stats">
+        <div><dt>Price impact</dt><dd id="w-impact">–</dd></div>
+        <div><dt>Fee</dt><dd id="w-fee">–</dd></div>
+        <div><dt>Route</dt><dd id="w-route">Jupiter</dd></div>
+      </dl>
+      <button class="go" type="button" id="w-go">Connect wallet</button>
+      <p class="wnote" id="w-note">Routed through Jupiter for the best price. Your wallet shows the exact trade before you approve it.</p>
+    </form>
+  </div>
+
+  <div class="ticker" id="markets-t" aria-label="Markets">
+    <div class="track" id="track"></div>
+  </div>
+
+  <section id="trade-info">
+    <div class="wrap">
+      <div class="head rev">
+        <div class="eyebrow">One market, two directions</div>
+        <h2>Up or down, you have a move.</h2>
+        <p>Buying and selling are live today, routed through Jupiter. Leveraged longs and shorts are next. Use the calculator below to see how they'll work.</p>
+      </div>
+      <div class="sides">
+        <article class="side l rev">
+          <span class="tag">▲ Long · live as spot buys</span>
+          <h3>You think it goes up.</h3>
+          <p>Buy the token now with USDC or SOL. Leveraged longs, which borrow extra USDC to make the position bigger, are coming next.</p>
+          <div class="cardmk"><span id="cl-name">Today's top gainer</span><span class="mono" id="cl-chg"></span></div>
+          <canvas id="c-long" aria-label="Hourly candles for today's top gainer"></canvas>
+          <a class="btn" href="#trade" data-goside="long" style="width:max-content">Buy now</a>
+        </article>
+        <article class="side s rev">
+          <span class="tag">▼ Short · coming soon</span>
+          <h3>You think it goes down.</h3>
+          <p>Today you can sell what you hold and step aside in USDC. True shorts, which borrow the token and sell it, are coming next.</p>
+          <div class="cardmk"><span id="cs-name">Today's weakest market</span><span class="mono" id="cs-chg"></span></div>
+          <canvas id="c-short" aria-label="Hourly candles for today's weakest market"></canvas>
+          <a class="btn" href="#trade" data-goside="short" style="width:max-content">Sell to USDC</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" style="padding-top:0">
+    <div class="wrap">
+      <div class="head rev">
+        <div class="eyebrow">How Tilt works</div>
+        <h2>Your wallet, your keys, the best route.</h2>
+        <p>Tilt is a front end. Trades route through Jupiter and deposits go into Jupiter Lend. Nothing sits with Tilt in between.</p>
+      </div>
+      <div class="flow rev">
+        <svg viewBox="0 0 1000 220" role="img" aria-label="Your wallet signs, Jupiter routes the trade across Solana markets, tokens arrive back in your wallet.">
+          <defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#6A7180"/></marker></defs>
+          <path id="p1" d="M210 92 H400" stroke="#E3E6EB" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+          <path id="p2" d="M600 92 H790" stroke="#E3E6EB" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+          <path id="p3" d="M850 140 C 850 210, 150 210, 150 140" stroke="#E3E6EB" stroke-width="2" fill="none" stroke-dasharray="5 6" marker-end="url(#ar)"/>
+          <g transform="translate(150 92)"><circle r="58" fill="#FBF3E2"/><text y="-4" text-anchor="middle" font-size="19" font-weight="600" fill="#0E1014">Your wallet</text><text y="18" text-anchor="middle" font-size="13" fill="#6A7180">signs the trade</text></g>
+          <g transform="translate(500 92)"><rect x="-100" y="-58" width="200" height="116" rx="22" fill="#0E1014"/><text y="-6" text-anchor="middle" font-size="21" font-weight="600" fill="#FFFFFF">Jupiter</text><text y="18" text-anchor="middle" font-size="13" fill="#B7BCC6">finds the best route</text></g>
+          <g transform="translate(850 92)"><circle r="58" fill="#E7F6EF"/><text y="-4" text-anchor="middle" font-size="19" font-weight="600" fill="#0E1014">Solana</text><text y="18" text-anchor="middle" font-size="13" fill="#6A7180">markets fill it</text></g>
+          <text x="305" y="78" text-anchor="middle" font-size="13" fill="#6A7180">signed order</text>
+          <text x="695" y="78" text-anchor="middle" font-size="13" fill="#6A7180">split across pools</text>
+          <text x="500" y="214" text-anchor="middle" font-size="13" fill="#6A7180">tokens land straight back in your wallet</text>
+          <g id="dots"></g>
+        </svg>
+      </div>
+      <div class="steps">
+        <div class="step rev"><span class="n">Step 1</span><h3>Pick and size</h3><p>Choose a market, how much to spend and what to pay with. You see the live quote before anything happens.</p></div>
+        <div class="step rev"><span class="n">Step 2</span><h3>Approve in your wallet</h3><p>Your wallet shows the exact amounts. Nothing moves until you approve, and you can cancel there.</p></div>
+        <div class="step rev"><span class="n">Step 3</span><h3>Settle on Solana</h3><p>Jupiter lands the trade, usually in a couple of seconds. You get a Solscan link to check it yourself.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="earn" style="padding-top:0">
+    <div class="wrap">
+      <div class="head rev">
+        <div class="eyebrow">Earn</div>
+        <h2>Put idle tokens to work.</h2>
+        <p>Deposit into Jupiter Lend and earn what borrowers pay. Rates move with demand and are paid continuously. Withdraw whenever the vault has free liquidity.</p>
+      </div>
+      <div class="tablewrap rev">
+        <table>
+          <thead><tr><th>Asset</th><th>APY now</th><th>Deposits</th><th>Your deposit</th><th>In wallet</th><th><span style="position:absolute;left:-9999px">Actions</span></th></tr></thead>
+          <tbody id="earn-rows"><tr><td colspan="6" class="muted">Loading Jupiter Lend vaults…</td></tr></tbody>
+        </table>
+      </div>
+      <p class="foot" id="earn-src">Live from Jupiter Lend.</p>
+    </div>
+  </section>
+
+  <section id="short-ex" style="padding-top:0">
+    <div class="wrap">
+      <div class="head rev">
+        <div class="eyebrow">Shorting, step by step</div>
+        <h2>See both sides of a short.</h2>
+        <p>Shorting means selling something you borrowed. This uses today's live price of the market you picked above. Drag to see what happens when you buy it back.</p>
+      </div>
+      <div class="split">
+        <div class="panel rev">
+          <div class="timeline">
+            <div class="tl"><i>1</i><div><b>Borrow <span class="sx-qty">–</span> <span class="sx-sym">BONK</span></b><span>Against your USDC collateral, at today's price of <span class="sx-entry">–</span> each.</span></div></div>
+            <div class="tl"><i>2</i><div><b>Sell them for $1,000</b><span>The USDC sits in your position while the short is open.</span></div></div>
+            <div class="tl"><i>3</i><div><b>Buy <span class="sx-qty">–</span> back later</b><span>At whatever the price is when you close.</span></div></div>
+            <div class="tl"><i>4</i><div><b>Return them to the pool</b><span>Plus the borrowing fee. What's left over is your profit or loss.</span></div></div>
+          </div>
+        </div>
+        <div class="panel rev">
+          <div class="sim-price">
+            <div><div class="eyebrow">Buy-back price</div><div class="big mono" id="sx-p">–</div></div>
+            <div style="text-align:right"><div class="eyebrow">Gross result</div><div class="big" id="sx-r">–</div></div>
+          </div>
+          <div style="margin-top:20px"><label class="eyebrow" for="sx">Price move when you close</label><input type="range" id="sx" min="-80" max="100" step="1" value="-40"></div>
+          <div class="mono muted" style="display:flex;justify-content:space-between;font-size:12px"><span>−80%</span><span>today's price</span><span>+100%</span></div>
+          <dl class="ledger">
+            <div><dt>Sold <span class="sx-qty">–</span> at <span class="sx-entry">–</span></dt><dd>+$1,000</dd></div>
+            <div><dt>Bought back at <span id="sx-p2">–</span></dt><dd id="sx-cost">–</dd></div>
+            <div><dt>Before fees</dt><dd id="sx-net">–</dd></div>
+          </dl>
+          <p class="warn" id="sx-w"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="calc" style="padding-top:0">
+    <div class="wrap">
+      <div class="head rev">
+        <div class="eyebrow">Leverage calculator · coming to Tilt</div>
+        <h2>Know your numbers before leverage goes live.</h2>
+        <p>Set a side, size and leverage on the market you picked above. The chart shows your result for any move from −50% to +50% from today's live price, and where the position would be liquidated.</p>
+      </div>
+      <div class="pnl">
+        <form class="panel rev" onsubmit="return false" aria-label="Position settings">
+          <div class="seg" id="p-seg" data-side="long" style="margin-bottom:22px">
+            <span class="pill" aria-hidden="true"></span>
+            <button type="button" aria-pressed="true" data-side="long">Long</button>
+            <button type="button" aria-pressed="false" data-side="short">Short</button>
+          </div>
+          <div class="ctl"><label for="p-amt">Collateral <output id="o-amt">$1,000</output></label><input type="range" id="p-amt" min="100" max="10000" step="100" value="1000"></div>
+          <div class="ctl"><label for="p-lev">Leverage <output id="o-lev">3×</output></label><input type="range" id="p-lev" min="1" max="5" step="0.5" value="3"></div>
+          <div class="ctl" style="margin-bottom:0"><label for="p-move">Price move <output id="o-move">+12%</output></label><input type="range" id="p-move" min="-50" max="50" step="1" value="12"></div>
+        </form>
+        <div class="panel rev">
+          <div class="kp">
+            <div><span>Position size</span><b id="k-size">$3,000</b></div>
+            <div><span>Result</span><b id="k-pnl">–</b></div>
+            <div><span>Liquidation price</span><b id="k-liq">–</b></div>
+          </div>
+          <canvas class="pchart" id="p-chart" aria-label="Profit and loss across price moves"></canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="head rev">
+        <div class="eyebrow">Built around your wallet</div>
+        <h2>Everything you need, nothing you don't.</h2>
+      </div>
+      <div class="feats">
+        <article class="feat rev">
+          <div class="vis">
+            <svg class="gauge" viewBox="0 0 180 104" aria-hidden="true">
+              <path d="M18 90 A72 72 0 0 1 54 27.6" stroke="#E0464B" stroke-width="12" fill="none" stroke-linecap="round"/>
+              <path d="M60 24.5 A72 72 0 0 1 120 24.5" stroke="#C98A12" stroke-width="12" fill="none"/>
+              <path d="M126 27.6 A72 72 0 0 1 162 90" stroke="#0E9F62" stroke-width="12" fill="none" stroke-linecap="round"/>
+              <g class="needle" id="needle"><path d="M90 90 L90 30" stroke="#0E1014" stroke-width="3" stroke-linecap="round"/></g>
+              <circle cx="90" cy="90" r="7" fill="#0E1014"/>
+            </svg>
+            <div class="mono" style="position:absolute;bottom:12px;font-size:13px;text-align:center;padding:0 10px" id="hf">–</div>
+          </div>
+          <h3>Room at a glance</h3>
+          <p>The needle shows how far the market can move against a leveraged position before liquidation, using the calculator's side and leverage.</p>
+        </article>
+        <article class="feat rev">
+          <div class="vis"><div class="rate"><span id="sol">–</span><small id="sol-s">SOL · 24h –</small></div></div>
+          <h3>Live market data</h3>
+          <p>Prices come from Jupiter and refresh every 30 seconds. Quotes are fetched fresh before every trade.</p>
+        </article>
+        <article class="feat rev">
+          <div class="vis"><div class="pos" id="dash"><div class="empty">Connect a wallet to see your holdings here.</div></div></div>
+          <h3>One dashboard</h3>
+          <p>Your memecoins and Jupiter Lend deposits side by side, valued at live prices.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" style="padding-top:0">
+    <div class="wrap faq">
+      <div class="head" style="margin:0"><div class="eyebrow">FAQ</div><h2>Questions, answered.</h2></div>
+      <div>
+        <details open><summary>Does Tilt hold my funds?<i></i></summary><p class="ans">No. Tilt builds the trade, your wallet signs it, and it settles on Solana straight back to your wallet. Deposits go into Jupiter Lend vaults in your name. Tilt never has custody.</p></details>
+        <details><summary>Where do trades go?<i></i></summary><p class="ans">Every buy and sell is routed by Jupiter, which splits the order across Solana markets for the best price. The fee Jupiter charges is shown before you approve.</p></details>
+        <details><summary>How does Earn pay?<i></i></summary><p class="ans">Jupiter Lend lends your deposit to borrowers and passes their interest to depositors. The APY shown is the live rate and changes as borrowing demand changes. It is not guaranteed.</p></details>
+        <details><summary>Can I withdraw any time?<i></i></summary><p class="ans">Yes, as long as the vault has free liquidity. When a vault is heavily borrowed, a large withdrawal may have to wait until borrowers repay.</p></details>
+        <details><summary>When do leveraged longs and shorts arrive?<i></i></summary><p class="ans">They're next. They need a lending program for memecoins with sound liquidations, and we'll only switch them on once that's safe. Until then the calculator shows how they'll work.</p></details>
+        <details><summary>What do I need to start?<i></i></summary><p class="ans">A Solana wallet such as Phantom, Solflare or Backpack, a little SOL for network fees, and USDC or SOL to trade with.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="cta rev">
+        <canvas id="cta-c" aria-hidden="true"></canvas>
+        <h2>Which way are you leaning?</h2>
+        <p>Connect a Solana wallet and make your first trade in under a minute.</p>
+        <button class="btn" type="button" data-wallet>Connect wallet</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <div class="fgrid">
+    <a class="brand" href="#top"><svg viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="9" fill="#0E1014"/><path d="M15 15 L20 23 H10 Z" fill="#fff"/><rect x="5" y="11.5" width="20" height="3" rx="1.5" fill="#fff" transform="rotate(-12 15 13)"/></svg>Tilt</a>
+    <nav class="flinks" aria-label="Footer"><a href="#trade">Trade</a><a href="#earn">Earn</a><a href="#calc">Calculator</a><a href="#faq">FAQ</a><a href="https://x.com/" target="_blank" rel="noopener">X</a></nav>
+  </div>
+  <p class="disc">© 2026 Tilt. Tilt is a non-custodial interface. Swaps are routed by Jupiter and deposits are held in Jupiter Lend, both third-party Solana programs. Memecoins are extremely volatile and can lose most or all of their value. Lending rates change and are never guaranteed. Smart contracts can fail. Only trade what you can afford to lose.</p>
+</footer>
+
+<div class="modal" id="m-wallet" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="mw-t">
+    <div class="sheet-h"><h3 id="mw-t">Connect a wallet</h3><button class="x" type="button" data-close aria-label="Close"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 1l12 12M13 1L1 13" stroke="#0E1014" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>
+    <div id="mw-body"></div>
+    <div class="err" id="mw-err" role="alert"></div>
+  </div>
+</div>
+
+<div class="modal" id="m-lend" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="ml-t">
+    <div class="sheet-h"><h3 id="ml-t">Deposit</h3><button class="x" type="button" data-close aria-label="Close"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 1l12 12M13 1L1 13" stroke="#0E1014" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>
+    <div class="seg" id="ml-seg" data-side="long" style="margin-bottom:14px"><span class="pill" aria-hidden="true"></span><button type="button" aria-pressed="true" data-side="long">Deposit</button><button type="button" aria-pressed="false" data-side="short">Withdraw</button></div>
+    <div class="field">
+      <label for="ml-amt"><span>Amount</span><button type="button" class="balink" id="ml-max"></button></label>
+      <div class="row"><input type="number" id="ml-amt" placeholder="0.00" min="0" step="any" inputmode="decimal"><span class="unit" id="ml-unit">USDC</span></div>
+    </div>
+    <dl class="stats"><div><dt>APY now</dt><dd id="ml-apy">–</dd></div><div><dt>Earns in a year at this rate</dt><dd id="ml-year">–</dd></div></dl>
+    <button class="go" type="button" id="ml-go" style="background:var(--ink)">Deposit</button>
+    <div class="err" id="ml-err" role="alert"></div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/@solana/web3.js@1.98.0/lib/index.iife.min.js"></script>
+<script>
+(() => {
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const C = { ink: '#0E1014', muted: '#6A7180', line: '#E3E6EB', long: '#0E9F62', short: '#E0464B', lend: '#C98A12', paper: '#F6F7F9' };
+
+/* ---------- config ---------- */
+const JUP = 'https://api.jup.ag';
+const JUP_KEY = '';                       // optional: paste a free key from portal.jup.ag for higher rate limits
+const RPC = 'https://api.mainnet-beta.solana.com';
+const USDC = { s: 'USDC', mint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', d: 6 };
+const SOLT = { s: 'SOL', mint: 'So11111111111111111111111111111111111111112', d: 9 };
+const MK = [
+  { s: 'BONK', n: 'Bonk', mint: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263', d: 5, c: '#F2A23A' },
+  { s: 'WIF', n: 'dogwifhat', mint: 'EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm', d: 6, c: '#B4876B' },
+  { s: 'POPCAT', n: 'Popcat', mint: '7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr', d: 9, c: '#6E6AF0' },
+  { s: 'PENGU', n: 'Pudgy Penguins', mint: '2zMMhcVQEXDtdE6vsFS7S7D5oUodfJHE8vd1gnBouauv', d: 6, c: '#5BA4D9' },
+  { s: 'FARTCOIN', n: 'Fartcoin', mint: '9BB6NFEcjBCtnNLFko2FqVQBq8HHM13kCyYcdQbgpump', d: 6, c: '#7DAF3C' },
+  { s: 'PNUT', n: 'Peanut the Squirrel', mint: '2qEHjDLDLbuBgRYvsxhc5D6uDWAivNFZGan56P1tpump', d: 6, c: '#C98A12' },
+  { s: 'BOME', n: 'Book of Meme', mint: 'ukHH6c7mMyiWCf1b9pnWe25TSpkDDt3H5pQZgZ74J82', d: 6, c: '#2F9E8F' }
+];
+const BY = Object.fromEntries([...MK, USDC, SOLT].map(m => [m.s, m]));
+const BYMINT = Object.fromEntries([...MK, USDC, SOLT].map(m => [m.mint, m]));
+
+/* ---------- helpers ---------- */
+const money = (n, d = 2) => (n < 0 ? '−' : '') + '$' + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+const sMoney = (n, d = 0) => (n > 0 ? '+' : n < 0 ? '−' : '') + '$' + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+const fmtP = v => v == null || !isFinite(v) ? '–' : '$' + (v < .0001 ? v.toFixed(9) : v < .01 ? v.toFixed(6) : v < 1 ? v.toFixed(4) : v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+const fmtBig = v => !isFinite(v) ? '–' : v >= 1e9 ? '$' + (v / 1e9).toFixed(2) + 'B' : v >= 1e6 ? '$' + (v / 1e6).toFixed(2) + 'M' : v >= 1e3 ? '$' + (v / 1e3).toFixed(1) + 'K' : '$' + Math.round(v).toLocaleString('en-US');
+const fmtQ = v => !isFinite(v) ? '–' : v >= 1e6 ? v.toLocaleString('en-US', { maximumFractionDigits: 0 }) : v >= 1 ? v.toLocaleString('en-US', { maximumFractionDigits: 4 }) : v.toLocaleString('en-US', { maximumSignificantDigits: 6 });
+const pct = v => (v >= 0 ? '+' : '−') + Math.abs(v * 100).toFixed(2) + '%';
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+const timeStr = ms => new Date(ms).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+const toBase = (ui, d) => { const [a, b = ''] = String(ui).split('.'); return (BigInt(a || '0') * 10n ** BigInt(d) + BigInt((b + '0'.repeat(d)).slice(0, d) || '0')).toString(); };
+const fromBase = (n, d) => Number(n) / 10 ** d;
+const b64ToBytes = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+const bytesToB64 = b => { let s = ''; for (let i = 0; i < b.length; i += 0x8000) s += String.fromCharCode.apply(null, b.subarray(i, i + 0x8000)); return btoa(s); };
+const B58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+const bs58 = b => { let n = 0n; for (const x of b) n = n * 256n + BigInt(x); let s = ''; while (n > 0n) { s = B58[Number(n % 58n)] + s; n /= 58n; } for (const x of b) { if (x) break; s = '1' + s; } return s; };
+const ctx2 = c => { const dpr = Math.min(2, devicePixelRatio || 1), W0 = c.clientWidth, H = c.clientHeight; if (c.width !== Math.round(W0 * dpr) || c.height !== Math.round(H * dpr)) { c.width = Math.round(W0 * dpr); c.height = Math.round(H * dpr); } const x = c.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); return [x, W0, H]; };
+const jget = async (path, opt = {}) => { const h = { ...(opt.headers || {}) }; if (JUP_KEY) h['x-api-key'] = JUP_KEY; const r = await fetch(JUP + path, { ...opt, headers: h }); const t = await r.text(); let j; try { j = JSON.parse(t); } catch (e) { j = { error: t }; } if (!r.ok) { const e = new Error(r.status === 429 ? 'Jupiter is rate limiting requests. Wait a few seconds and try again.' : (j.error || j.message || 'Request failed (' + r.status + ')')); e.status = r.status; throw e; } return j; };
+const jpost = (path, body) => jget(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+const rpc = async (method, params) => { const r = await fetch(RPC, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }) }); const j = await r.json(); if (j.error) throw new Error(j.error.message); return j.result; };
+let tT; function toast(m, link) { $$('.toast').forEach(t => t.remove()); const t = document.createElement('div'); t.className = 'toast'; t.innerHTML = esc(m) + (link ? ` <a href="${link}" target="_blank" rel="noopener" style="color:#9fe3c4">View on Solscan ↗</a>` : ''); document.body.appendChild(t); clearTimeout(tT); tT = setTimeout(() => t.remove(), link ? 9000 : 4200); }
+const friendly = e => { const m = String((e && e.message) || e || ''); return /reject|denied|cancel|declin|closed/i.test(m) ? 'You cancelled the request in your wallet.' : m || 'Something went wrong. Try again.'; };
+
+/* ---------- nav + reveal ---------- */
+const nav = $('#nav'); addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 8), { passive: true });
+if ('IntersectionObserver' in window && !RM) {
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
+  $$('.rev').forEach(el => { if (el.getBoundingClientRect().top > innerHeight) io.observe(el); });
+}
+const onSee = (el, fn) => { if (!('IntersectionObserver' in window)) return fn(); const o = new IntersectionObserver(es => { if (es[0].isIntersecting) { fn(); o.disconnect(); } }, { threshold: .3 }); o.observe(el); };
+
+/* ---------- live prices (Jupiter Tokens API) ---------- */
+const T = {}; let pricesAt = 0, priceErr = '';
+async function loadPrices() {
+  try {
+    const list = await jget('/tokens/v2/search?query=' + [...MK, SOLT, USDC].map(m => m.mint).join(','));
+    list.forEach(t => { const m = BYMINT[t.id]; if (!m) return; const st = t.stats24h || {}; T[m.s] = { last: +t.usdPrice, change: (+st.priceChange || 0) / 100, liq: +t.liquidity || 0, vol: (+st.buyVolume || 0) + (+st.sellVolume || 0), icon: t.icon, mcap: +t.mcap || 0 }; });
+    pricesAt = Date.now(); priceErr = '';
+  } catch (e) { priceErr = e.message; }
+  renderAll();
+}
+
+/* ---------- candles (Crypto.com public API, GeckoTerminal fallback) ---------- */
+const CRO = { BONK: 'BONK_USD', WIF: 'WIF_USD', POPCAT: 'POPCAT_USD', PENGU: 'PENGU_USD', FARTCOIN: 'FARTCOIN_USD', PNUT: 'PNUT_USD', BOME: 'BOME_USD' };
+const poolCache = {};
+async function candlesFor(sym, tf) {
+  const mapC = d => ({ o: +d.o, h: +d.h, l: +d.l, c: +d.c, t: +d.t });
+  try {
+    const r = await fetch(`https://api.crypto.com/exchange/v1/public/get-candlestick?instrument_name=${CRO[sym]}&timeframe=${tf}&count=${tf === '5m' ? 48 : 24}`);
+    const j = await r.json(); const d = j && j.result && j.result.data; if (Array.isArray(d) && d.length > 1) return d.map(mapC).sort((a, b) => a.t - b.t).slice(tf === '5m' ? -48 : -24);
+  } catch (e) {}
+  try {
+    const m = BY[sym]; let pool = poolCache[sym];
+    if (!pool) { const pj = await (await fetch(`https://api.geckoterminal.com/api/v2/networks/solana/tokens/${m.mint}/pools?page=1`)).json(); pool = pj.data && pj.data[0] && pj.data[0].attributes.address; poolCache[sym] = pool; }
+    if (!pool) return [];
+    const q = tf === '5m' ? 'minute?aggregate=5&limit=48' : 'hour?aggregate=1&limit=24';
+    const oj = await (await fetch(`https://api.geckoterminal.com/api/v2/networks/solana/pools/${pool}/ohlcv/${q}&currency=usd&token=base`)).json();
+    const L = oj.data && oj.data.attributes && oj.data.attributes.ohlcv_list; if (!Array.isArray(L)) return [];
+    return L.map(k => ({ t: k[0] * 1000, o: +k[1], h: +k[2], l: +k[3], c: +k[4] })).sort((a, b) => a.t - b.t);
+  } catch (e) { return []; }
+}
+
+/* ---------- trade panel ---------- */
+let cur = 'BONK', side = 'long', candles5 = [], wAnim = 1;
+const sel = $('#w-mkt'); sel.innerHTML = MK.map(m => `<option value="${m.s}">${m.s}</option>`).join('');
+sel.addEventListener('change', () => { cur = sel.value; marketUI(); load5(); renderAll(); requote(); });
+function marketUI() { const m = BY[cur], t = T[cur]; $('#w-sub').textContent = m.n + ' · Solana'; const ic = $('#w-icon'); if (t && t.icon) { ic.src = t.icon; ic.style.background = 'none'; } else { ic.removeAttribute('src'); ic.style.background = m.c; } $('#w-outunit').textContent = side === 'long' ? cur : 'USDC'; $('#w-sellunit').textContent = cur; }
+async function load5() { const want = cur; candles5 = []; $('#w-nodata').hidden = false; $('#w-nodata').textContent = 'Loading chart…'; drawW(); const d = await candlesFor(want, '5m'); if (want !== cur) return; candles5 = d; $('#w-nodata').hidden = d.length > 1; if (d.length < 2) $('#w-nodata').textContent = 'Chart unavailable right now. Prices and trading still work.'; animW(); }
+function setSide(s) {
+  side = s; const seg = $('#seg'); seg.dataset.side = s; seg.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.side === s));
+  $('#w-go').classList.toggle('short', s === 'short'); $('#bar').style.transform = `rotate(${s === 'long' ? -7 : 7}deg)`;
+  $('#w-pay').hidden = s !== 'long'; $('#w-sellunit').hidden = s === 'long';
+  $('#w-pay-l').textContent = s === 'long' ? 'You pay' : 'You sell';
+  $('#w-amt').value = ''; quote = null; marketUI(); paintQuote(); paintBal(); drawW();
+}
+$$('#seg button').forEach(b => b.addEventListener('click', () => setSide(b.dataset.side)));
+$$('[data-goside]').forEach(a => a.addEventListener('click', () => setSide(a.dataset.goside)));
+$('#w-pay').addEventListener('change', () => { paintBal(); requote(); });
+const priceOf = s => (T[s] && T[s].last) || (s === cur && candles5.length ? candles5[candles5.length - 1].c : null);
+function animW() { const t0 = performance.now(); wAnim = RM ? 1 : 0; const f = now => { wAnim = Math.min(1, (now - t0) / 900); drawW(); if (wAnim < 1) requestAnimationFrame(f); }; requestAnimationFrame(f); }
+function drawW() {
+  const [x, W0, H] = ctx2($('#w-chart')); x.clearRect(0, 0, W0, H);
+  const t = T[cur]; $('#w-price').textContent = fmtP(priceOf(cur));
+  const ch = $('#w-chg'); if (t) { ch.textContent = '24h ' + pct(t.change); ch.style.color = t.change >= 0 ? C.long : C.short; ch.classList.remove('muted'); } else { ch.textContent = '24h –'; ch.style.color = ''; }
+  if (candles5.length < 2) return;
+  const d = candles5, n = d.length, lo = Math.min(...d.map(k => k.l)), hi = Math.max(...d.map(k => k.h)), sp = (hi - lo) || hi * .001 || 1;
+  const X = i => 4 + i / (n - 1) * (W0 - 8), Y = v => 10 + (1 - (v - lo) / sp) * (H - 28);
+  const col = side === 'long' ? C.long : C.short, upTo = Math.max(1, Math.floor((n - 1) * (1 - Math.pow(1 - wAnim, 3))));
+  const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, col + '2a'); g.addColorStop(1, col + '00');
+  x.beginPath(); for (let i = 0; i <= upTo; i++) i ? x.lineTo(X(i), Y(d[i].c)) : x.moveTo(X(i), Y(d[i].c)); x.lineTo(X(upTo), H - 18); x.lineTo(X(0), H - 18); x.closePath(); x.fillStyle = g; x.fill();
+  x.beginPath(); for (let i = 0; i <= upTo; i++) i ? x.lineTo(X(i), Y(d[i].c)) : x.moveTo(X(i), Y(d[i].c)); x.strokeStyle = col; x.lineWidth = 2; x.lineJoin = 'round'; x.stroke();
+  const ex = X(upTo), ey = Y(d[upTo].c); x.fillStyle = col + '33'; x.beginPath(); x.arc(ex, ey, 7, 0, 7); x.fill(); x.fillStyle = col; x.beginPath(); x.arc(ex, ey, 3.5, 0, 7); x.fill();
+  x.font = '11px "Geist Mono", ui-monospace, monospace'; x.fillStyle = C.muted; x.textAlign = 'left'; x.fillText(timeStr(d[0].t), 4, H - 3); x.textAlign = 'right'; x.fillText(timeStr(d[n - 1].t) + ' · 5m', W0 - 4, H - 3);
+}
+
+/* ---------- quotes + swaps (Jupiter Swap API v2) ---------- */
+let quote = null, qTimer = 0, qSeq = 0, busy = false;
+const legs = () => { const m = BY[cur]; if (side === 'long') { const pay = BY[$('#w-pay').value]; return { inp: pay, out: m }; } return { inp: m, out: USDC }; };
+$('#w-amt').addEventListener('input', requote);
+function requote() { clearTimeout(qTimer); quote = null; paintQuote('…'); qTimer = setTimeout(getQuote, 550); }
+async function getQuote() {
+  const v = parseFloat($('#w-amt').value); const { inp, out } = legs();
+  if (!(v > 0)) { quote = null; return paintQuote(); }
+  const seq = ++qSeq;
+  try {
+    const q = await jget(`/swap/v2/order?inputMint=${inp.mint}&outputMint=${out.mint}&amount=${toBase($('#w-amt').value, inp.d)}` + (W.addr ? '&taker=' + W.addr : ''));
+    if (seq !== qSeq) return; quote = { ...q, inp, out }; paintQuote();
+  } catch (e) { if (seq !== qSeq) return; quote = { error: e.message }; paintQuote(); }
+}
+function paintQuote(state) {
+  const go = $('#w-go'), { inp, out } = legs();
+  $('#w-outunit').textContent = out.s;
+  if (state === '…') { $('#w-out').textContent = '…'; }
+  else if (!quote) { $('#w-out').textContent = '–'; $('#w-impact').textContent = '–'; $('#w-fee').textContent = '–'; $('#w-route').textContent = 'Jupiter'; $('#w-rate').textContent = ''; }
+  else if (quote.error) { $('#w-out').textContent = '–'; $('#w-rate').textContent = ''; }
+  else {
+    const o = fromBase(quote.outAmount, out.d), i = fromBase(quote.inAmount, inp.d);
+    $('#w-out').textContent = fmtQ(o);
+    $('#w-rate').textContent = quote.outUsdValue ? '≈ ' + money(+quote.outUsdValue) : '';
+    const imp = Math.abs(+quote.priceImpactPct || 0) * 100; $('#w-impact').textContent = imp < .01 ? '< 0.01%' : imp.toFixed(2) + '%'; $('#w-impact').style.color = imp > 3 ? C.short : '';
+    $('#w-fee').textContent = quote.feeBps != null ? (quote.feeBps / 100).toFixed(2) + '% · Jupiter' : '–';
+    $('#w-route').textContent = 'Jupiter' + (quote.router ? ' · ' + quote.router : '');
+  }
+  const note = $('#w-note');
+  if (!W.addr) { go.textContent = 'Connect wallet'; go.disabled = false; note.textContent = 'Routed through Jupiter for the best price. Your wallet shows the exact trade before you approve it.'; return; }
+  const v = parseFloat($('#w-amt').value);
+  if (busy) return;
+  if (!(v > 0)) { go.textContent = side === 'long' ? `Enter an amount to buy ${cur}` : `Enter an amount of ${cur} to sell`; go.disabled = true; return; }
+  if (state === '…') { go.textContent = 'Getting the best price…'; go.disabled = true; return; }
+  if (quote && quote.error) { go.textContent = 'Try again'; go.disabled = false; note.textContent = quote.error; return; }
+  if (quote && !quote.transaction) { const msg = quote.errorCode === 1 ? `Not enough ${inp.s} in your wallet.` : quote.errorCode === 2 ? 'Not enough SOL to pay the network fee. Add a little SOL and try again.' : quote.errorMessage || 'No route found for this amount.'; go.textContent = msg; go.disabled = true; note.textContent = 'Routed through Jupiter. Nothing has been sent.'; return; }
+  const imp = Math.abs(+((quote && quote.priceImpactPct) || 0)) * 100;
+  go.textContent = side === 'long' ? `Buy ${cur}` : `Sell ${cur} for USDC`; go.disabled = false;
+  note.textContent = imp > 3 ? `High price impact (${imp.toFixed(1)}%). Try a smaller amount.` : 'Your wallet shows the exact trade before you approve it.';
+}
+$('#w-go').addEventListener('click', async () => {
+  if (!W.addr) return W.open();
+  if (quote && quote.error) return getQuote();
+  const v = parseFloat($('#w-amt').value); if (!(v > 0) || busy) return;
+  const { inp, out } = legs(), go = $('#w-go');
+  busy = true; go.disabled = true; go.textContent = 'Preparing the trade…';
+  try {
+    const o = await jget(`/swap/v2/order?inputMint=${inp.mint}&outputMint=${out.mint}&amount=${toBase($('#w-amt').value, inp.d)}&taker=${W.addr}`);
+    if (!o.transaction) throw new Error(o.errorCode === 1 ? `Not enough ${inp.s} in your wallet.` : o.errorCode === 2 ? 'Not enough SOL for the network fee.' : o.errorMessage || 'No route found for this amount.');
+    go.textContent = 'Approve in your wallet…';
+    const signed = await W.sign(b64ToBytes(o.transaction));
+    go.textContent = 'Sending to Solana…';
+    const ex = await jpost('/swap/v2/execute', { signedTransaction: bytesToB64(signed), requestId: o.requestId });
+    const link = ex.signature ? 'https://solscan.io/tx/' + ex.signature : null;
+    if (ex.status === 'Success') { const got = fromBase(ex.totalOutputAmount || ex.outputAmountResult || o.outAmount, out.d); toast(`Done. You received ${fmtQ(got)} ${out.s}.`, link); $('#w-amt').value = ''; quote = null; setTimeout(refreshWallet, 2500); }
+    else toast('The trade did not go through' + (ex.error ? ': ' + ex.error : '.') + ' Nothing was taken except possibly the network fee.', link);
+  } catch (e) { toast(friendly(e)); }
+  busy = false; paintQuote(); paintBal();
+});
+
+/* ---------- wallet balances (Solana RPC) ---------- */
+const BAL = {}; let balOk = false;
+async function refreshWallet() {
+  if (!W.addr) return;
+  try {
+    const [lam, a, b] = await Promise.all([
+      rpc('getBalance', [W.addr, { commitment: 'confirmed' }]),
+      rpc('getParsedTokenAccountsByOwner', [W.addr, { programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA' }, { encoding: 'jsonParsed', commitment: 'confirmed' }]),
+      rpc('getParsedTokenAccountsByOwner', [W.addr, { programId: 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb' }, { encoding: 'jsonParsed', commitment: 'confirmed' }]).catch(() => ({ value: [] }))
+    ]);
+    for (const k in BAL) delete BAL[k];
+    BAL.SOL = lam.value / 1e9;
+    [...a.value, ...b.value].forEach(acc => { const info = acc.account.data.parsed.info, m = BYMINT[info.mint]; if (m && m.s !== 'SOL') BAL[m.s] = (BAL[m.s] || 0) + (+info.tokenAmount.uiAmount || 0); });
+    balOk = true;
+  } catch (e) { balOk = false; }
+  paintBal(); renderDash(); loadLend();
+}
+function paintBal() {
+  const el = $('#w-bal'); if (!W.addr || !balOk) { el.textContent = ''; return; }
+  const s = side === 'long' ? $('#w-pay').value : cur, have = BAL[s] || 0;
+  el.innerHTML = `<button type="button" class="balink" id="w-max">Balance ${fmtQ(have)} ${s}${have > 0 ? ' · Max' : ''}</button>`;
+  $('#w-max').onclick = () => { if (!(have > 0)) return; const keep = s === 'SOL' ? Math.max(0, have - 0.01) : have; $('#w-amt').value = +keep.toFixed(Math.min(9, BY[s].d)); requote(); };
+}
+
+/* ---------- ticker ---------- */
+function renderTicker() {
+  const it = MK.map(m => { const t = T[m.s]; return `<div class="it">${t && t.icon ? `<img class="tokimg sm" src="${esc(t.icon)}" alt="">` : `<span class="tok" style="background:${m.c};width:22px;height:22px;font-size:10px">${m.s[0]}</span>`}<b>${m.s}</b><span class="mono">${t ? fmtP(t.last) : '–'}</span>${t ? `<span class="mono ${t.change >= 0 ? 'L' : 'S'}">${t.change >= 0 ? '▲' : '▼'} ${Math.abs(t.change * 100).toFixed(2)}%</span>` : ''}</div>`; }).join('');
+  $('#track').innerHTML = it + it;
+}
+
+/* ---------- long/short cards ---------- */
+let leaders = { up: null, down: null }; const C1h = {}; let cardsSeen = false, cardsAnimated = false;
+async function pickLeaders() {
+  const have = MK.filter(m => T[m.s]); if (have.length < 2) return;
+  const sorted = have.slice().sort((a, b) => T[b.s].change - T[a.s].change), up = sorted[0].s, down = sorted[sorted.length - 1].s;
+  $('#cl-name').textContent = `${up} · today's top gainer`; $('#cl-chg').textContent = pct(T[up].change); $('#cl-chg').style.color = T[up].change >= 0 ? C.long : C.short;
+  $('#cs-name').textContent = `${down} · today's weakest`; $('#cs-chg').textContent = pct(T[down].change); $('#cs-chg').style.color = T[down].change >= 0 ? C.long : C.short;
+  if (up !== leaders.up || down !== leaders.down) { leaders = { up, down }; const [a, b] = await Promise.all([candlesFor(up, '1h'), candlesFor(down, '1h')]); C1h[up] = a; C1h[down] = b; drawCards(true); }
+}
+function candles(c, d, t) {
+  const [x, W0, H] = ctx2(c); x.clearRect(0, 0, W0, H);
+  if (!d || d.length < 2) { x.fillStyle = C.paper; x.fillRect(0, 0, W0, H); x.fillStyle = C.muted; x.font = '13px Geist, system-ui, sans-serif'; x.textAlign = 'center'; x.fillText(d ? 'Hourly chart unavailable right now' : 'Loading hourly candles…', W0 / 2, H / 2); return; }
+  const n = d.length, cw = W0 / n, lo = Math.min(...d.map(k => k.l)), hi = Math.max(...d.map(k => k.h)), sp = (hi - lo) || 1, Y = q => 8 + (1 - (q - lo) / sp) * (H - 16);
+  const show = Math.min(n, Math.floor(t * n) + 1);
+  for (let i = 0; i < show; i++) {
+    const k = d[i], up = k.c >= k.o, cx = i * cw + cw / 2, f = i === show - 1 && t < 1 ? (t * n) % 1 : 1;
+    x.globalAlpha = .3 + .7 * (i / n); x.strokeStyle = x.fillStyle = up ? C.long : C.short; x.lineWidth = 1.2;
+    x.beginPath(); x.moveTo(cx, Y(k.h)); x.lineTo(cx, Y(k.h) + (Y(k.l) - Y(k.h)) * f); x.stroke();
+    const y1 = Y(Math.max(k.o, k.c)), y2 = Y(Math.min(k.o, k.c)); x.fillRect(cx - cw * .3, y1, cw * .6, Math.max(1.5, (y2 - y1) * f));
+  }
+  x.globalAlpha = 1;
+}
+function drawCards(fresh) {
+  const a = C1h[leaders.up], b = C1h[leaders.down];
+  if (fresh && cardsSeen && !cardsAnimated && a && b && !RM) { cardsAnimated = true; const t0 = performance.now(); const f = now => { const t = Math.min(1, (now - t0) / 1600); candles($('#c-long'), a, t); candles($('#c-short'), b, t); if (t < 1) requestAnimationFrame(f); }; return requestAnimationFrame(f); }
+  candles($('#c-long'), a, 1); candles($('#c-short'), b, 1);
+}
+onSee($('#c-long'), () => { cardsSeen = true; drawCards(true); });
+
+/* ---------- flow dots ---------- */
+const dotsG = $('#dots'), dots = [];
+['#p1', '#p2', '#p3'].forEach((s, k) => { const p = $(s), m = k === 2 ? 5 : 4; for (let i = 0; i < m; i++) { const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); c.setAttribute('r', k === 2 ? 4 : 5); c.setAttribute('fill', [C.lend, C.long, C.long][k]); dotsG.appendChild(c); dots.push({ p, c, o: i / m, sp: k === 2 ? .12 : .22, L: p.getTotalLength() }); } });
+function flow(now) { const t = now / 1000; dots.forEach(d => { const u = (d.o + t * d.sp) % 1, pt = d.p.getPointAtLength(u * d.L); d.c.setAttribute('cx', pt.x); d.c.setAttribute('cy', pt.y); d.c.setAttribute('opacity', Math.sin(u * Math.PI)); }); if (!RM) requestAnimationFrame(flow); }
+requestAnimationFrame(flow);
+
+/* ---------- earn (Jupiter Lend) ---------- */
+let VAULTS = [], POS = {}, lendErr = '';
+async function loadLend() {
+  try {
+    VAULTS = await jget('/lend/v1/earn/tokens');
+    POS = {};
+    if (W.addr) { const p = await jget('/lend/v1/earn/positions?users=' + W.addr); p.forEach(x => { POS[x.token.assetAddress || x.token.asset.address] = x; }); }
+    lendErr = '';
+  } catch (e) { lendErr = e.message; }
+  renderEarn(); renderDash();
+}
+const apy = v => (+v.totalRate || 0) / 100;
+function renderEarn() {
+  const tb = $('#earn-rows');
+  if (!VAULTS.length) { tb.innerHTML = `<tr><td colspan="6" class="muted">${lendErr ? 'Could not load Jupiter Lend: ' + esc(lendErr) : 'Loading Jupiter Lend vaults…'}</td></tr>`; return; }
+  const rows = VAULTS.slice().sort((a, b) => apy(b) - apy(a));
+  tb.innerHTML = rows.map(v => {
+    const a = v.asset, d = a.decimals, p = +a.price || 0, tvl = fromBase(v.totalAssets, d) * p, pos = POS[a.address];
+    const dep = pos ? fromBase(pos.underlyingAssets, d) : 0, sym = a.uiSymbol || a.symbol, isSol = a.address === SOLT.mint;
+    const wal = !W.addr ? null : isSol ? (balOk ? BAL.SOL : null) : pos ? fromBase(pos.underlyingBalance, d) : null;
+    return `<tr><td><div class="pair"><img class="tokimg" src="${esc(a.logoUrl || '')}" alt=""><div>${esc(isSol ? 'SOL' : sym)}<small>${esc(a.name)}</small></div></div></td>
+      <td><span class="apy">${apy(v).toFixed(2)}%</span>${+v.rewardsRate ? `<small class="muted" style="display:block;font-size:12px">incl. ${(+v.rewardsRate / 100).toFixed(2)}% rewards</small>` : ''}</td>
+      <td class="num">${fmtBig(tvl)}</td><td class="num">${W.addr ? fmtQ(dep) : '–'}</td><td class="num muted">${wal == null ? '–' : fmtQ(wal)}</td>
+      <td><div class="acts"><button class="btn" type="button" data-lend="dep" data-a="${a.address}">Deposit</button>${dep > 0 ? `<button class="btn" type="button" data-lend="wd" data-a="${a.address}">Withdraw</button>` : ''}</div></td></tr>`;
+  }).join('');
+  $('#earn-src').textContent = 'Live from Jupiter Lend. APY includes any rewards and changes with borrowing demand.';
+}
+$('#earn-rows').addEventListener('click', e => { const b = e.target.closest('[data-lend]'); if (!b) return; if (!W.addr) return W.open(); openLend(b.dataset.a, b.dataset.lend === 'dep' ? 'dep' : 'wd'); });
+let LV = null, lmode = 'dep';
+function openLend(addr, mode) {
+  LV = VAULTS.find(v => v.asset.address === addr); if (!LV) return;
+  $('#ml-amt').value = ''; $('#ml-err').textContent = ''; setLmode(mode); $('#m-lend').hidden = false; setTimeout(() => $('#ml-amt').focus(), 50);
+}
+function lMax() { const a = LV.asset, pos = POS[a.address]; if (lmode === 'wd') return pos ? fromBase(pos.underlyingAssets, a.decimals) : 0; if (a.address === SOLT.mint) return balOk ? Math.max(0, (BAL.SOL || 0) - 0.01) : 0; return pos ? fromBase(pos.underlyingBalance, a.decimals) : (BAL[a.symbol] || 0); }
+function setLmode(m) {
+  lmode = m; const seg = $('#ml-seg'); seg.dataset.side = m === 'dep' ? 'long' : 'short'; seg.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', (b.dataset.side === 'long') === (m === 'dep')));
+  const a = LV.asset, sym = a.address === SOLT.mint ? 'SOL' : (a.uiSymbol || a.symbol);
+  $('#ml-t').textContent = (m === 'dep' ? 'Deposit ' : 'Withdraw ') + sym; $('#ml-unit').textContent = sym; $('#ml-go').textContent = m === 'dep' ? 'Deposit' : 'Withdraw';
+  $('#ml-apy').textContent = apy(LV).toFixed(2) + '%'; const mx = lMax(); $('#ml-max').textContent = (m === 'dep' ? 'In wallet ' : 'Deposited ') + fmtQ(mx) + ' · Max'; lYear();
+}
+function lYear() { const v = parseFloat($('#ml-amt').value) || 0; $('#ml-year').textContent = v > 0 ? '≈ ' + fmtQ(v * apy(LV) / 100) + ' ' + $('#ml-unit').textContent : '–'; }
+$$('#ml-seg button').forEach(b => b.addEventListener('click', () => setLmode(b.dataset.side === 'long' ? 'dep' : 'wd')));
+$('#ml-max').addEventListener('click', () => { const mx = lMax(); if (mx > 0) { $('#ml-amt').value = +mx.toFixed(LV.asset.decimals); lYear(); } });
+$('#ml-amt').addEventListener('input', lYear);
+$('#ml-go').addEventListener('click', async () => {
+  const v = parseFloat($('#ml-amt').value), go = $('#ml-go'), err = $('#ml-err'); err.textContent = '';
+  if (!(v > 0)) { err.textContent = 'Enter an amount first.'; return; }
+  const a = LV.asset; go.disabled = true; go.textContent = 'Preparing…';
+  try {
+    const r = await jpost(lmode === 'dep' ? '/lend/v1/earn/deposit' : '/lend/v1/earn/withdraw', { asset: a.address, amount: toBase($('#ml-amt').value, a.decimals), signer: W.addr });
+    if (!r.transaction) throw new Error(r.error || 'Jupiter Lend could not build this transaction.');
+    go.textContent = 'Approve in your wallet…';
+    const sig = await W.signSend(b64ToBytes(r.transaction));
+    $('#m-lend').hidden = true; toast((lmode === 'dep' ? 'Deposit' : 'Withdrawal') + ' sent. Balances update once it confirms.', 'https://solscan.io/tx/' + sig);
+    setTimeout(refreshWallet, 6000); setTimeout(refreshWallet, 16000);
+  } catch (e) { err.textContent = friendly(e); }
+  go.disabled = false; go.textContent = lmode === 'dep' ? 'Deposit' : 'Withdraw';
+});
+
+/* ---------- short explainer ---------- */
+function sx() {
+  const r = $('#sx'), mv = +r.value / 100, p = priceOf(cur);
+  r.style.setProperty('--p', ((r.value - r.min) / (r.max - r.min) * 100) + '%');
+  $$('.sx-sym').forEach(e => e.textContent = cur);
+  if (!p) return;
+  const qty = 1000 / p, back = p * (1 + mv), cost = qty * back, pnl = 1000 - cost;
+  $$('.sx-qty').forEach(e => e.textContent = Math.round(qty).toLocaleString('en-US') + (e.closest('b') ? '' : ' ' + cur));
+  $$('.sx-entry').forEach(e => e.textContent = fmtP(p));
+  $('#sx-p').textContent = fmtP(back); $('#sx-p2').textContent = fmtP(back); $('#sx-cost').textContent = '−' + money(cost, 0);
+  const R = $('#sx-r'); R.textContent = sMoney(pnl); R.style.color = pnl > 0 ? C.long : pnl < 0 ? C.short : C.ink; $('#sx-net').textContent = sMoney(pnl);
+  $('#sx-w').textContent = mv < 0 ? 'The price fell, so buying back costs less than you sold for. That gap is your profit.' : mv > 0 ? 'The price rose, so buying back costs more than you sold for. Your collateral covers the gap, and if it rises far enough the position can be liquidated.' : 'The price ended where it started. You break even before fees.';
+}
+$('#sx').addEventListener('input', sx);
+
+/* ---------- leverage calculator ---------- */
+const MM = .05;
+const liqMove = (L, s) => s === 'long' ? (L <= 1 ? null : -(1 / L - MM)) : (1 / L - MM);
+let pside = 'long';
+$$('#p-seg button').forEach(b => b.addEventListener('click', () => { pside = b.dataset.side; $('#p-seg').dataset.side = pside; $$('#p-seg button').forEach(x => x.setAttribute('aria-pressed', x === b)); pnl(); gauge(); }));
+['#p-amt', '#p-lev', '#p-move'].forEach(s => $(s).addEventListener('input', () => { pnl(); gauge(); }));
+function pnlAt(m, amt, L, s) { const lq = liqMove(L, s); if (lq != null && (s === 'long' ? m / 100 <= lq : m / 100 >= lq)) return -amt; return Math.max(-amt, amt * L * (m / 100) * (s === 'long' ? 1 : -1)); }
+function pnl() {
+  const amt = +$('#p-amt').value, L = +$('#p-lev').value, m = +$('#p-move').value, p = priceOf(cur);
+  ['#p-amt', '#p-lev', '#p-move'].forEach(s => { const r = $(s); r.style.setProperty('--p', ((r.value - r.min) / (r.max - r.min) * 100) + '%'); });
+  $('#o-amt').textContent = money(amt, 0); $('#o-lev').textContent = L + '×'; $('#o-move').textContent = (m > 0 ? '+' : '') + m + '%' + (p ? ' · ' + fmtP(p * (1 + m / 100)) : '');
+  $('#k-size').textContent = money(amt * L, 0);
+  const r = pnlAt(m, amt, L, pside), k = $('#k-pnl'); k.textContent = sMoney(r); k.style.color = r > 0 ? C.long : r < 0 ? C.short : C.ink;
+  const lq = liqMove(L, pside); $('#k-liq').textContent = lq == null ? 'None at 1×' : p ? fmtP(p * (1 + lq)) : (lq > 0 ? '+' : '−') + Math.abs(lq * 100).toFixed(1) + '%';
+  drawP(amt, L, m, lq == null ? null : lq * 100, p);
+}
+function drawP(amt, L, m, lq, p) {
+  const [x, W0, H] = ctx2($('#p-chart')); x.clearRect(0, 0, W0, H);
+  const pad = { l: 62, r: 24, t: 14, b: 28 }, iw = W0 - pad.l - pad.r, ih = H - pad.t - pad.b;
+  const maxV = Math.max(amt * L * .5, amt) * 1.05, X = v => pad.l + (v + 50) / 100 * iw, Y = v => pad.t + ih / 2 - v / maxV * ih / 2;
+  x.font = '11.5px "Geist Mono", ui-monospace, monospace'; x.textBaseline = 'middle';
+  [-1, -.5, 0, .5, 1].forEach(f => { const v = f * maxV, y = Math.round(Y(v)) + .5; x.strokeStyle = f === 0 ? '#C9CED6' : C.line; x.lineWidth = 1; x.beginPath(); x.moveTo(pad.l, y); x.lineTo(W0 - pad.r, y); x.stroke(); x.fillStyle = C.muted; x.textAlign = 'right'; x.fillText(sMoney(Math.round(v)), pad.l - 8, y); });
+  x.textAlign = 'center'; x.textBaseline = 'alphabetic'; [-50, -25, 0, 25, 50].forEach(v => { x.fillStyle = C.muted; x.fillText(v === 0 && p ? fmtP(p) : (v > 0 ? '+' : '') + v + '%', X(v), H - 8); });
+  if (lq != null && lq >= -50 && lq <= 50) { x.fillStyle = 'rgba(224,70,75,.07)'; if (pside === 'long') x.fillRect(X(-50), pad.t, X(lq) - X(-50), ih); else x.fillRect(X(lq), pad.t, X(50) - X(lq), ih); x.setLineDash([4, 4]); x.strokeStyle = C.short; x.beginPath(); x.moveTo(X(lq), pad.t); x.lineTo(X(lq), pad.t + ih); x.stroke(); x.setLineDash([]); x.fillStyle = C.short; x.textAlign = pside === 'long' ? 'left' : 'right'; x.fillText('liquidation', X(lq) + (pside === 'long' ? 6 : -6), pad.t + 12); }
+  const pts = []; for (let v = -50; v <= 50; v += .5) pts.push([v, pnlAt(v, amt, L, pside)]);
+  [[C.long, 1], [C.short, -1]].forEach(([col, s]) => {
+    x.save(); x.beginPath(); if (s > 0) x.rect(0, 0, W0, Y(0)); else x.rect(0, Y(0), W0, H); x.clip();
+    const g = x.createLinearGradient(0, s > 0 ? pad.t : pad.t + ih, 0, Y(0)); g.addColorStop(0, col + '30'); g.addColorStop(1, col + '05');
+    x.beginPath(); pts.forEach(([v, q], i) => i ? x.lineTo(X(v), Y(q)) : x.moveTo(X(v), Y(q))); x.lineTo(X(50), Y(0)); x.lineTo(X(-50), Y(0)); x.closePath(); x.fillStyle = g; x.fill();
+    x.beginPath(); pts.forEach(([v, q], i) => i ? x.lineTo(X(v), Y(q)) : x.moveTo(X(v), Y(q))); x.strokeStyle = col; x.lineWidth = 2.2; x.lineJoin = 'round'; x.stroke(); x.restore();
+  });
+  const cx = X(m), cy = Y(pnlAt(m, amt, L, pside));
+  x.strokeStyle = C.ink; x.setLineDash([2, 3]); x.beginPath(); x.moveTo(cx, pad.t); x.lineTo(cx, pad.t + ih); x.stroke(); x.setLineDash([]);
+  x.fillStyle = '#fff'; x.beginPath(); x.arc(cx, cy, 6.5, 0, 7); x.fill(); x.strokeStyle = C.ink; x.lineWidth = 2; x.stroke();
+}
+
+/* ---------- feature cards ---------- */
+const needle = $('#needle'); needle.style.transform = 'rotate(-90deg)'; let gaugeOn = false;
+function gauge() {
+  if (!gaugeOn) return;
+  const L = +$('#p-lev').value, lm = liqMove(L, pside), room = lm == null ? 1 : Math.min(1, Math.abs(lm) / .95);
+  needle.style.transform = `rotate(${-90 + room * 180}deg)`; const p = priceOf(cur);
+  $('#hf').textContent = lm == null ? `${L}× ${pside} ${cur}: no liquidation` : `${L}× ${pside} ${cur}: ${Math.abs(lm * 100).toFixed(1)}% ${pside === 'long' ? 'drop' : 'rise'}${p ? ' to ' + fmtP(p * (1 + lm)) : ''}`;
+}
+onSee(needle, () => { gaugeOn = true; setTimeout(gauge, 120); });
+function renderSol() { const s = T.SOL; if (!s) return; $('#sol').textContent = fmtP(s.last); $('#sol-s').textContent = 'SOL · 24h ' + pct(s.change); $('#sol-s').style.color = s.change >= 0 ? C.long : C.short; }
+function renderDash() {
+  const el = $('#dash');
+  if (!W.addr) { el.innerHTML = '<div class="empty">Connect a wallet to see your holdings here.</div>'; return; }
+  const rows = [];
+  MK.forEach(m => { const q = BAL[m.s]; if (q > 0) rows.push([`<span class="chip" style="background:var(--long-bg);color:var(--long)">HOLD</span>${m.s}`, (T[m.s] ? T[m.s].last : 0) * q]); });
+  VAULTS.forEach(v => { const pos = POS[v.asset.address]; const d = pos ? fromBase(pos.underlyingAssets, v.asset.decimals) : 0; if (d > 0) rows.push([`<span class="chip" style="background:var(--lend-bg);color:var(--lend)">EARN</span>${esc(v.asset.address === SOLT.mint ? 'SOL' : v.asset.uiSymbol || v.asset.symbol)}`, d * (+v.asset.price || 0)]); });
+  rows.sort((a, b) => b[1] - a[1]);
+  el.innerHTML = rows.length ? rows.slice(0, 4).map(([l, v]) => `<div>${l}<span class="v">${money(v)}</span></div>`).join('') : `<div class="empty">${balOk ? 'No memecoins or Earn deposits in ' + esc(W.short(W.addr)) + ' yet.' : 'Connected as ' + esc(W.short(W.addr)) + '. Balances could not load right now.'}</div>`;
+}
+
+/* ---------- cta field ---------- */
+(function () {
+  const c = $('#cta-c'), t0 = performance.now(); let vis = false;
+  const f = now => { const [x, W0, H] = ctx2(c); x.clearRect(0, 0, W0, H); const t = (now - t0) / 1000, s = 22;
+    for (let y = s / 2; y < H; y += s) for (let xx = s / 2; xx < W0; xx += s) { const d = Math.hypot(xx - W0 / 2, y - H * 1.1) / Math.max(W0, H), w = Math.sin(d * 14 - t * 1.2) * .5 + .5, r = 1 + w * 3.2 * (1 - Math.min(1, d)); x.fillStyle = 'rgba(255,255,255,' + (.18 + w * .3) + ')'; x.beginPath(); x.arc(xx, y, r, 0, 7); x.fill(); }
+    if (!RM && vis) requestAnimationFrame(f); };
+  if ('IntersectionObserver' in window) new IntersectionObserver(es => { const was = vis; vis = es[0].isIntersecting; if (vis && !was) requestAnimationFrame(f); }).observe(c);
+  requestAnimationFrame(f);
+})();
+
+/* ---------- wallet (Wallet Standard first, legacy providers second) ---------- */
+const W = (() => {
+  const std = new Map(); let cur = null, addr = null, acct = null;
+  const api = { register(...ws) { ws.forEach(w => { if (w && w.features && w.features['standard:connect'] && (w.chains || []).some(c => String(c).startsWith('solana:'))) std.set(w.name, w); }); if (!$('#m-wallet').hidden && !addr) list(); return () => {}; } };
+  addEventListener('wallet-standard:register-wallet', e => { try { e.detail(api); } catch (x) {} });
+  try { dispatchEvent(new CustomEvent('wallet-standard:app-ready', { detail: api })); } catch (x) {}
+  const short = a => a.slice(0, 4) + '…' + a.slice(-4);
+  function all() {
+    const L = [...std.values()].map(w => ({ name: w.name, icon: w.icon, w }));
+    const ph = window.phantom && window.phantom.solana && window.phantom.solana.isPhantom ? window.phantom.solana : null;
+    if (ph && !L.some(x => x.name === 'Phantom')) L.push({ name: 'Phantom', p: ph, color: '#ab9ff2' });
+    if (window.solflare && window.solflare.isSolflare && !L.some(x => x.name === 'Solflare')) L.push({ name: 'Solflare', p: window.solflare, color: '#fc7227' });
+    if (window.backpack && window.backpack.connect && !L.some(x => x.name === 'Backpack')) L.push({ name: 'Backpack', p: window.backpack, color: '#e33e3f' });
+    return L;
+  }
+  const body = $('#mw-body'), err = $('#mw-err');
+  function list() {
+    $('#mw-t').textContent = 'Connect a wallet'; const L = all();
+    if (!L.length) { body.innerHTML = `<p class="muted" style="margin:0 0 14px">No Solana wallet found in this browser. Install one, then reload the page.</p><div class="wl">${[['Phantom', 'https://phantom.com/download', '#ab9ff2'], ['Solflare', 'https://solflare.com/download', '#fc7227'], ['Backpack', 'https://backpack.app/download', '#e33e3f']].map(([n, u, c]) => `<a href="${u}" target="_blank" rel="noopener"><span class="ph" style="background:${c}">${n[0]}</span>${n}<span class="st">Install ↗</span></a>`).join('')}</div>`; return; }
+    body.innerHTML = `<p class="muted" style="margin:0 0 14px">Connecting only shares your address. Every trade and deposit asks for your approval in the wallet.</p><div class="wl">${L.map((w, i) => `<button type="button" data-i="${i}">${w.icon ? `<img src="${esc(w.icon)}" alt="">` : `<span class="ph" style="background:${w.color}">${esc(w.name[0])}</span>`}${esc(w.name)}<span class="st">Detected</span></button>`).join('')}</div>`;
+    body.querySelectorAll('.wl button').forEach(b => b.addEventListener('click', () => connect(L[+b.dataset.i])));
+  }
+  function connected() {
+    $('#mw-t').textContent = 'Wallet connected';
+    body.innerHTML = `<p class="muted" style="margin:0 0 10px">Connected with ${esc(cur.name)}.</p><div class="addr">${esc(addr)}</div><div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn" type="button" id="w-copy">Copy address</button><a class="btn" href="https://solscan.io/account/${esc(addr)}" target="_blank" rel="noopener">Solscan ↗</a><button class="btn" type="button" id="w-disc">Disconnect</button></div>`;
+    $('#w-copy').addEventListener('click', () => { navigator.clipboard.writeText(addr).then(() => toast('Address copied'), () => { const r = document.createRange(); r.selectNodeContents(body.querySelector('.addr')); getSelection().removeAllRanges(); getSelection().addRange(r); }); });
+    $('#w-disc').addEventListener('click', async () => { try { if (cur.w && cur.w.features['standard:disconnect']) await cur.w.features['standard:disconnect'].disconnect(); else if (cur.p && cur.p.disconnect) await cur.p.disconnect(); } catch (e) {} addr = null; cur = null; acct = null; paint(); list(); });
+  }
+  function paint() { $$('[data-wallet]').forEach(b => b.textContent = addr ? short(addr) : 'Connect wallet'); paintQuote(); paintBal(); renderDash(); renderEarn(); if (addr) { refreshWallet(); requote(); } }
+  async function connect(w) {
+    err.textContent = '';
+    try {
+      let a;
+      if (w.w) { const r = await w.w.features['standard:connect'].connect(); acct = r && r.accounts && r.accounts[0] || w.w.accounts[0]; a = acct && acct.address; }
+      else { const r = await w.p.connect(); a = ((r && r.publicKey) || w.p.publicKey) + ''; }
+      if (!a) throw new Error('The wallet did not share an address.');
+      cur = w; addr = a; paint(); W.close(); toast('Wallet connected');
+    } catch (e) { err.textContent = friendly(e); }
+  }
+  const CHAIN = 'solana:mainnet';
+  async function sign(bytes) {
+    if (cur.w && cur.w.features['solana:signTransaction']) { const [r] = await cur.w.features['solana:signTransaction'].signTransaction({ account: acct, transaction: bytes, chain: CHAIN }); return r.signedTransaction; }
+    if (cur.p && cur.p.signTransaction && window.solanaWeb3) { const tx = solanaWeb3.VersionedTransaction.deserialize(bytes); const s = await cur.p.signTransaction(tx); return s.serialize(); }
+    throw new Error('This wallet cannot sign Solana transactions here. Try Phantom, Solflare or Backpack.');
+  }
+  async function signSend(bytes) {
+    if (cur.w && cur.w.features['solana:signAndSendTransaction']) { const [r] = await cur.w.features['solana:signAndSendTransaction'].signAndSendTransaction({ account: acct, transaction: bytes, chain: CHAIN }); return bs58(r.signature); }
+    if (cur.p && cur.p.signAndSendTransaction && window.solanaWeb3) { const tx = solanaWeb3.VersionedTransaction.deserialize(bytes); const r = await cur.p.signAndSendTransaction(tx); return r.signature || r; }
+    const signed = await sign(bytes); return rpc('sendTransaction', [bytesToB64(signed), { encoding: 'base64', maxRetries: 3 }]);
+  }
+  return { open() { err.textContent = ''; addr ? connected() : list(); $('#m-wallet').hidden = false; }, close() { $('#m-wallet').hidden = true; }, get addr() { return addr; }, short, sign, signSend };
+})();
+$$('[data-wallet]').forEach(b => b.addEventListener('click', () => W.open()));
+$$('[data-close]').forEach(b => b.addEventListener('click', () => b.closest('.modal').hidden = true));
+$$('.modal').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.hidden = true; }));
+addEventListener('keydown', e => { if (e.key === 'Escape') $$('.modal').forEach(m => m.hidden = true); });
+
+/* ---------- boot ---------- */
+function renderAll() { renderTicker(); marketUI(); drawW(); pickLeaders(); sx(); pnl(); gauge(); renderSol(); renderDash(); }
+setSide('long'); renderAll(); loadPrices(); load5(); loadLend();
+setInterval(loadPrices, 30000); setInterval(load5, 120000); setInterval(loadLend, 120000); setInterval(() => { if (W.addr) refreshWallet(); }, 60000);
+let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { pnl(); drawCards(); drawW(); }, 120); });
+})();
+</script>
+
+</body>
+</html>
