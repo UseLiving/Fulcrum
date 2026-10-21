@@ -3,23 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Tilt</title>
+<title>Fulcrum</title>
 <meta name="description" content="Buy and sell Solana memecoins at the best price and earn yield on USDC and SOL. Non-custodial, routed through Jupiter.">
-<meta property="og:title" content="Tilt">
+<meta property="og:title" content="Fulcrum">
 <meta property="og:description" content="Pick a side. Trade Solana memecoins and earn on idle tokens.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Crect width='30' height='30' rx='9' fill='%230E1014'/%3E%3Cpath d='M15 15 L20 23 H10 Z' fill='%23fff'/%3E%3Crect x='5' y='11.5' width='20' height='3' rx='1.5' fill='%23fff' transform='rotate(-12 15 13)'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg viewBox="0 0 15 15" shape-rendering="crispEdges"%3E%3Crect width="15" height="15" fill="%230E1014"/%3E%3Cg%3E%3Crect x="1" y="8" width="3" height="1" fill="%23fff"/%3E%3Crect x="4" y="7" width="3" height="1" fill="%23fff"/%3E%3Crect x="7" y="6" width="3" height="1" fill="%23fff"/%3E%3Crect x="10" y="5" width="4" height="1" fill="%23fff"/%3E%3C/g%3E%3Crect x="8" y="7" width="1" height="1" fill="%23fff"/%3E%3Crect x="7" y="8" width="3" height="1" fill="%23fff"/%3E%3Crect x="6" y="9" width="5" height="1" fill="%23fff"/%3E%3Crect x="5" y="10" width="7" height="1" fill="%23fff"/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Pixelify+Sans:wght@400;500;600;700&family=VT323&display=swap">
 <style>[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}img{max-width:100%}</style>
 <style>
-/* Layout: one calm column on cool paper. A balance beam is the brand motif: it tilts toward whatever side you pick, from the logo to the hero to the simulator. Color is reserved for meaning: green long, red short, amber lend. Light only, by choice. */
+/* Layout: one calm column on cool paper. A pixel balance beam is the brand motif: it tips toward whatever side you pick, from the logo to the hero to the simulator. Color is reserved for meaning: green long, red short, amber lend. Light only, by choice. */
 :root{
   --paper:#F6F7F9; --surface:#FFFFFF; --ink:#0E1014; --ink-2:#3B414D; --muted:#6A7180; --line:#E3E6EB; --line-2:#EEF0F3;
   --long:#0E9F62; --long-bg:#E7F6EF; --short:#E0464B; --short-bg:#FCEDEE; --lend:#C98A12; --lend-bg:#FBF3E2;
-  --f-display:"Familjen Grotesk","Helvetica Neue",Arial,sans-serif;
-  --f-body:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
-  --f-mono:"Geist Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --f-display:"Silkscreen","Courier New",monospace;
+  --f-body:"Pixelify Sans","Trebuchet MS",system-ui,sans-serif;
+  --f-mono:"VT323",ui-monospace,"SF Mono",Menlo,monospace;
   --r:14px; --ease:cubic-bezier(.2,.7,.1,1);
   color-scheme:light;
 }
@@ -75,7 +75,7 @@ p{margin:0}
 .seesaw{margin-top:44px;max-width:420px;animation:fadeup .9s .5s var(--ease) both}
 .seesaw svg{width:100%;height:auto;overflow:visible;display:block}
 .seesaw .bar{transform-origin:210px 40px;transition:transform 1.1s cubic-bezier(.3,1.5,.4,1)}
-.seesaw text{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em}
+.seesaw text{font-family:var(--f-display);font-size:11px;letter-spacing:.04em}
 @media (max-width:960px){.hero{grid-template-columns:1fr;gap:40px;padding-top:40px}.seesaw{display:none}}
 
 /* trade widget */
@@ -295,20 +295,91 @@ footer{padding-block:56px 64px}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:12px 18px;border-radius:999px;font-size:14px;z-index:120;animation:pop .35s var(--ease) both;max-width:calc(100% - 32px);text-align:center}
 
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001s!important;animation-delay:0s!important;transition-duration:.001s!important}.ticker .track{animation:none}}
+
+/* ===== pixel skin ===== */
+*,*::before,*::after{border-radius:0!important}
+body{font-size:17px;line-height:1.5;-webkit-font-smoothing:none;image-rendering:pixelated}
+canvas,img,.tokimg{image-rendering:pixelated}
+h1,h2,h3{letter-spacing:0!important;line-height:1.1;font-weight:700}
+.hero h1{font-size:clamp(46px,7.4vw,100px);line-height:1;text-shadow:6px 6px 0 var(--line)}
+.head h2{font-size:clamp(28px,4.4vw,52px)}
+.side h3{font-size:26px}.step h3,.feat h3{font-size:18px}.ledger h3{font-size:18px}
+.cta h2{font-size:clamp(30px,5.2vw,64px)}
+.eyebrow{font-family:var(--f-display);font-size:11px;letter-spacing:.06em}
+.mono,.stats dd,.price b,.price span,td.num,.apy,.kp b,.ctl output,.unit,.unitsel,.outamt,.addr,.big.mono,.ticker .mono,.cardmk .mono,#w-amt,#ml-amt{font-family:var(--f-mono)!important}
+.price b{font-size:24px}.price span,.stats dd,.unit,.unitsel{font-size:18px}
+td.num,.apy{font-size:20px}.kp b{font-size:clamp(20px,2.6vw,26px)}
+.field input[type=number]{font-size:30px}.outamt{font-size:30px}
+.ticker .it{font-size:16px}.ticker .mono{font-size:20px}
+.big{font-family:var(--f-display);letter-spacing:0;font-size:clamp(34px,5vw,56px)}
+.big.mono{font-size:clamp(44px,6.4vw,76px)}
+.brand{font-family:var(--f-display);font-size:20px;letter-spacing:0}
+.brand svg{width:30px;height:30px;image-rendering:pixelated}
+.brand .beam{transform-origin:7.5px 6.5px}
+.widget,.side,.panel,.feat,.flow,.step,.tablewrap,.sheet,.faq details{border:3px solid var(--ink)!important}
+.widget,.side,.panel,.feat,.flow,.step,.tablewrap,.sheet{box-shadow:6px 6px 0 var(--ink)!important}
+.side:hover{transform:translate(-3px,-3px);box-shadow:9px 9px 0 var(--ink)!important}
+.faq details{border-width:0 0 3px!important}
+.btn{border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink);font-family:var(--f-display);font-size:12px;letter-spacing:.04em;text-transform:uppercase;height:44px}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--ink)}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.hero .ctas .btn{height:52px;font-size:13px}
+.cta .btn{box-shadow:4px 4px 0 #6A7180}
+.go{border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);font-family:var(--f-display);font-size:13px;letter-spacing:.04em;text-transform:uppercase}
+.go:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.go:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+.go:disabled{box-shadow:4px 4px 0 var(--line);border-color:var(--muted)}
+.seg{border:3px solid var(--ink);padding:3px;background:var(--surface)}
+.seg button{font-family:var(--f-display);font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+.seg .pill{top:3px;bottom:3px;left:3px;width:calc(50% - 3px);transition:transform .25s steps(4),background .25s steps(2)}
+.field{border:3px solid var(--ink)}
+.field.ro{border:3px dashed var(--line)!important}
+.lev button{border:2px solid var(--ink)}
+.tag,.pos .chip{font-family:var(--f-display)!important;font-size:10px!important;border:2px solid currentColor}
+.ticker{border-block:3px solid var(--ink)}
+.ticker .it{border-right:3px solid var(--line)}
+.ticker .track{animation-timing-function:steps(600)}
+th{font-family:var(--f-display);font-size:10px;text-transform:uppercase;letter-spacing:.06em;border-bottom:3px solid var(--ink)}
+td{border-bottom:2px dashed var(--line)}
+.tl::before{width:4px;left:12px}.tl i{border:3px solid var(--ink);font-family:var(--f-display);font-size:11px}
+.warn,.kp div,.feat .vis,.nodata{border:2px solid var(--line)}
+.ledger div{border-bottom:2px dashed var(--line)}
+input[type=range]::-webkit-slider-runnable-track{height:6px}
+input[type=range]::-webkit-slider-thumb{width:20px;height:20px;border:3px solid var(--ink);margin-top:-7px;box-shadow:3px 3px 0 var(--ink)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border:3px solid var(--ink)}
+.faq summary{font-family:var(--f-body);font-weight:600;font-size:19px}
+.faq summary i::before,.faq summary i::after{height:4px;top:9px;transition:transform .2s steps(2)}
+.links a{font-family:var(--f-display);font-size:11px;letter-spacing:.04em;text-transform:uppercase}
+.links a::after{height:3px;transition:transform .3s steps(5)}
+.nav.scrolled{border-bottom:3px solid var(--ink)}
+.rate{font-family:var(--f-mono);font-size:56px;letter-spacing:0}
+.rate small{font-size:16px}
+#hf{font-family:var(--f-mono)!important;font-size:17px!important}
+.toast{border:3px solid var(--ink);box-shadow:4px 4px 0 #6A7180;font-family:var(--f-body)}
+.wl button,.wl a{border:3px solid var(--ink)}
+.wl button:hover,.wl a:hover{box-shadow:3px 3px 0 var(--ink)}
+.x{border:3px solid var(--ink)}
+.cta{border:3px solid var(--ink);box-shadow:8px 8px 0 var(--line)}
+.disc{border-top:3px dashed var(--line)}
+@keyframes rise{from{transform:translateY(105%)}to{transform:none}}
+.hero h1 .ln span{animation-timing-function:steps(6)}
+.rev.in{animation-timing-function:steps(6)}
+.seesaw .bar{transition:transform .6s steps(6)}
+.gauge .needle{transition:transform 1.2s steps(12)}
 </style>
 </head>
 <body>
 <header class="nav" id="nav">
   <div class="wrap">
-    <a class="brand" href="#top" aria-label="Tilt home">
-      <svg viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="9" fill="#0E1014"/><path d="M15 15 L20 23 H10 Z" fill="#fff"/><g class="beam"><rect x="5" y="11.5" width="20" height="3" rx="1.5" fill="#fff" transform="rotate(-12 15 13)"/></g></svg>
-      Tilt
+    <a class="brand" href="#top" aria-label="Fulcrum home">
+      <svg viewBox="0 0 15 15" aria-hidden="true" shape-rendering="crispEdges"><rect width="15" height="15" fill="#0E1014"/><g class="beam"><rect x="1" y="8" width="3" height="1" fill="#fff"/><rect x="4" y="7" width="3" height="1" fill="#fff"/><rect x="7" y="6" width="3" height="1" fill="#fff"/><rect x="10" y="5" width="4" height="1" fill="#fff"/></g><rect x="8" y="7" width="1" height="1" fill="#fff"/><rect x="7" y="8" width="3" height="1" fill="#fff"/><rect x="6" y="9" width="5" height="1" fill="#fff"/><rect x="5" y="10" width="7" height="1" fill="#fff"/></svg>
+      Fulcrum
     </a>
     <nav class="links" aria-label="Main">
       <a href="#trade">Trade</a><a href="#markets-t">Markets</a><a href="#earn">Earn</a><a href="#calc">Calculator</a><a href="#faq">FAQ</a>
     </nav>
     <div class="navr">
-      <a class="btn icon ghost" href="https://x.com/" target="_blank" rel="noopener" aria-label="Tilt on X"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+      <a class="btn icon ghost" href="https://x.com/" target="_blank" rel="noopener" aria-label="Fulcrum on X"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
       <button class="btn ink" type="button" data-wallet>Connect wallet</button>
     </div>
   </div>
@@ -319,20 +390,20 @@ footer{padding-block:56px 64px}
     <div>
       <div class="eyebrow" style="animation:fadeup .8s both">Memecoin markets on Solana</div>
       <h1 style="margin-top:18px"><span class="ln"><span>Pick</span></span><span class="ln"><span>a side.</span></span></h1>
-      <p class="lead">Buy and sell the memecoins you follow at the best price across Solana, and earn yield on your idle USDC and SOL. Your wallet signs every trade. Tilt never holds your funds.</p>
+      <p class="lead">Buy and sell the memecoins you follow at the best price across Solana, and earn yield on your idle USDC and SOL. Your wallet signs every trade. Fulcrum never holds your funds.</p>
       <div class="ctas">
         <a class="btn ink" href="#trade">Start trading</a>
         <a class="btn" href="#earn">Earn on your tokens</a>
       </div>
       <div class="seesaw" aria-hidden="true">
-        <svg viewBox="0 0 420 92">
+        <svg viewBox="0 0 420 92" shape-rendering="crispEdges">
           <g class="bar" id="bar">
-            <rect x="20" y="36" width="380" height="8" rx="4" fill="#0E1014"/>
-            <rect x="28" y="12" width="70" height="24" rx="12" fill="#E7F6EF"/><text x="63" y="28.5" text-anchor="middle" fill="#0E9F62">BUY</text>
-            <rect x="322" y="12" width="70" height="24" rx="12" fill="#FCEDEE"/><text x="357" y="28.5" text-anchor="middle" fill="#E0464B">SELL</text>
+            <rect x="20" y="36" width="380" height="8" fill="#0E1014"/>
+            <rect x="28" y="12" width="70" height="24" fill="#E7F6EF" stroke="#0E9F62" stroke-width="2"/><text x="63" y="28.5" text-anchor="middle" fill="#0E9F62">BUY</text>
+            <rect x="322" y="12" width="70" height="24" fill="#FCEDEE" stroke="#E0464B" stroke-width="2"/><text x="357" y="28.5" text-anchor="middle" fill="#E0464B">SELL</text>
           </g>
-          <path d="M210 44 L232 86 H188 Z" fill="#0E1014"/>
-          <rect x="150" y="86" width="120" height="3" rx="1.5" fill="#E3E6EB"/>
+          <rect x="206" y="44" width="8" height="8" fill="#0E1014"/><rect x="200" y="52" width="20" height="8" fill="#0E1014"/><rect x="194" y="60" width="32" height="8" fill="#0E1014"/><rect x="188" y="68" width="44" height="8" fill="#0E1014"/><rect x="182" y="76" width="56" height="10" fill="#0E1014"/>
+          <rect x="150" y="86" width="120" height="4" fill="#E3E6EB"/>
         </svg>
       </div>
     </div>
@@ -403,19 +474,19 @@ footer{padding-block:56px 64px}
   <section id="how" style="padding-top:0">
     <div class="wrap">
       <div class="head rev">
-        <div class="eyebrow">How Tilt works</div>
+        <div class="eyebrow">How Fulcrum works</div>
         <h2>Your wallet, your keys, the best route.</h2>
-        <p>Tilt is a front end. Trades route through Jupiter and deposits go into Jupiter Lend. Nothing sits with Tilt in between.</p>
+        <p>Fulcrum is a front end. Trades route through Jupiter and deposits go into Jupiter Lend. Nothing sits with Fulcrum in between.</p>
       </div>
       <div class="flow rev">
-        <svg viewBox="0 0 1000 220" role="img" aria-label="Your wallet signs, Jupiter routes the trade across Solana markets, tokens arrive back in your wallet.">
+        <svg viewBox="0 0 1000 220" shape-rendering="crispEdges" role="img" aria-label="Your wallet signs, Jupiter routes the trade across Solana markets, tokens arrive back in your wallet.">
           <defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#6A7180"/></marker></defs>
           <path id="p1" d="M210 92 H400" stroke="#E3E6EB" stroke-width="2" fill="none" marker-end="url(#ar)"/>
           <path id="p2" d="M600 92 H790" stroke="#E3E6EB" stroke-width="2" fill="none" marker-end="url(#ar)"/>
           <path id="p3" d="M850 140 C 850 210, 150 210, 150 140" stroke="#E3E6EB" stroke-width="2" fill="none" stroke-dasharray="5 6" marker-end="url(#ar)"/>
-          <g transform="translate(150 92)"><circle r="58" fill="#FBF3E2"/><text y="-4" text-anchor="middle" font-size="19" font-weight="600" fill="#0E1014">Your wallet</text><text y="18" text-anchor="middle" font-size="13" fill="#6A7180">signs the trade</text></g>
-          <g transform="translate(500 92)"><rect x="-100" y="-58" width="200" height="116" rx="22" fill="#0E1014"/><text y="-6" text-anchor="middle" font-size="21" font-weight="600" fill="#FFFFFF">Jupiter</text><text y="18" text-anchor="middle" font-size="13" fill="#B7BCC6">finds the best route</text></g>
-          <g transform="translate(850 92)"><circle r="58" fill="#E7F6EF"/><text y="-4" text-anchor="middle" font-size="19" font-weight="600" fill="#0E1014">Solana</text><text y="18" text-anchor="middle" font-size="13" fill="#6A7180">markets fill it</text></g>
+          <g transform="translate(150 92)"><rect x="-64" y="-52" width="128" height="104" fill="#FBF3E2" stroke="#0E1014" stroke-width="3"/><text y="-4" text-anchor="middle" font-size="19" font-weight="600" fill="#0E1014">Your wallet</text><text y="18" text-anchor="middle" font-size="13" fill="#6A7180">signs the trade</text></g>
+          <g transform="translate(500 92)"><rect x="-100" y="-58" width="200" height="116" fill="#0E1014"/><text y="-6" text-anchor="middle" font-size="21" font-weight="600" fill="#FFFFFF">Jupiter</text><text y="18" text-anchor="middle" font-size="13" fill="#B7BCC6">finds the best route</text></g>
+          <g transform="translate(850 92)"><rect x="-64" y="-52" width="128" height="104" fill="#E7F6EF" stroke="#0E1014" stroke-width="3"/><text y="-4" text-anchor="middle" font-size="19" font-weight="600" fill="#0E1014">Solana</text><text y="18" text-anchor="middle" font-size="13" fill="#6A7180">markets fill it</text></g>
           <text x="305" y="78" text-anchor="middle" font-size="13" fill="#6A7180">signed order</text>
           <text x="695" y="78" text-anchor="middle" font-size="13" fill="#6A7180">split across pools</text>
           <text x="500" y="214" text-anchor="middle" font-size="13" fill="#6A7180">tokens land straight back in your wallet</text>
@@ -484,7 +555,7 @@ footer{padding-block:56px 64px}
   <section id="calc" style="padding-top:0">
     <div class="wrap">
       <div class="head rev">
-        <div class="eyebrow">Leverage calculator · coming to Tilt</div>
+        <div class="eyebrow">Leverage calculator · coming to Fulcrum</div>
         <h2>Know your numbers before leverage goes live.</h2>
         <p>Set a side, size and leverage on the market you picked above. The chart shows your result for any move from −50% to +50% from today's live price, and where the position would be liquidated.</p>
       </div>
@@ -520,12 +591,12 @@ footer{padding-block:56px 64px}
       <div class="feats">
         <article class="feat rev">
           <div class="vis">
-            <svg class="gauge" viewBox="0 0 180 104" aria-hidden="true">
-              <path d="M18 90 A72 72 0 0 1 54 27.6" stroke="#E0464B" stroke-width="12" fill="none" stroke-linecap="round"/>
+            <svg class="gauge" viewBox="0 0 180 104" aria-hidden="true" shape-rendering="crispEdges">
+              <path d="M18 90 A72 72 0 0 1 54 27.6" stroke="#E0464B" stroke-width="12" fill="none" stroke-linecap="butt"/>
               <path d="M60 24.5 A72 72 0 0 1 120 24.5" stroke="#C98A12" stroke-width="12" fill="none"/>
-              <path d="M126 27.6 A72 72 0 0 1 162 90" stroke="#0E9F62" stroke-width="12" fill="none" stroke-linecap="round"/>
-              <g class="needle" id="needle"><path d="M90 90 L90 30" stroke="#0E1014" stroke-width="3" stroke-linecap="round"/></g>
-              <circle cx="90" cy="90" r="7" fill="#0E1014"/>
+              <path d="M126 27.6 A72 72 0 0 1 162 90" stroke="#0E9F62" stroke-width="12" fill="none" stroke-linecap="butt"/>
+              <g class="needle" id="needle"><path d="M90 90 L90 30" stroke="#0E1014" stroke-width="3" stroke-linecap="butt"/></g>
+              <rect x="83" y="83" width="14" height="14" fill="#0E1014"/>
             </svg>
             <div class="mono" style="position:absolute;bottom:12px;font-size:13px;text-align:center;padding:0 10px" id="hf">–</div>
           </div>
@@ -550,7 +621,7 @@ footer{padding-block:56px 64px}
     <div class="wrap faq">
       <div class="head" style="margin:0"><div class="eyebrow">FAQ</div><h2>Questions, answered.</h2></div>
       <div>
-        <details open><summary>Does Tilt hold my funds?<i></i></summary><p class="ans">No. Tilt builds the trade, your wallet signs it, and it settles on Solana straight back to your wallet. Deposits go into Jupiter Lend vaults in your name. Tilt never has custody.</p></details>
+        <details open><summary>Does Fulcrum hold my funds?<i></i></summary><p class="ans">No. Fulcrum builds the trade, your wallet signs it, and it settles on Solana straight back to your wallet. Deposits go into Jupiter Lend vaults in your name. Fulcrum never has custody.</p></details>
         <details><summary>Where do trades go?<i></i></summary><p class="ans">Every buy and sell is routed by Jupiter, which splits the order across Solana markets for the best price. The fee Jupiter charges is shown before you approve.</p></details>
         <details><summary>How does Earn pay?<i></i></summary><p class="ans">Jupiter Lend lends your deposit to borrowers and passes their interest to depositors. The APY shown is the live rate and changes as borrowing demand changes. It is not guaranteed.</p></details>
         <details><summary>Can I withdraw any time?<i></i></summary><p class="ans">Yes, as long as the vault has free liquidity. When a vault is heavily borrowed, a large withdrawal may have to wait until borrowers repay.</p></details>
@@ -574,15 +645,15 @@ footer{padding-block:56px 64px}
 
 <footer class="wrap">
   <div class="fgrid">
-    <a class="brand" href="#top"><svg viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="9" fill="#0E1014"/><path d="M15 15 L20 23 H10 Z" fill="#fff"/><rect x="5" y="11.5" width="20" height="3" rx="1.5" fill="#fff" transform="rotate(-12 15 13)"/></svg>Tilt</a>
+    <a class="brand" href="#top"><svg viewBox="0 0 15 15" aria-hidden="true" shape-rendering="crispEdges"><rect width="15" height="15" fill="#0E1014"/><g class="beam"><rect x="1" y="8" width="3" height="1" fill="#fff"/><rect x="4" y="7" width="3" height="1" fill="#fff"/><rect x="7" y="6" width="3" height="1" fill="#fff"/><rect x="10" y="5" width="4" height="1" fill="#fff"/></g><rect x="8" y="7" width="1" height="1" fill="#fff"/><rect x="7" y="8" width="3" height="1" fill="#fff"/><rect x="6" y="9" width="5" height="1" fill="#fff"/><rect x="5" y="10" width="7" height="1" fill="#fff"/></svg>Fulcrum</a>
     <nav class="flinks" aria-label="Footer"><a href="#trade">Trade</a><a href="#earn">Earn</a><a href="#calc">Calculator</a><a href="#faq">FAQ</a><a href="https://x.com/" target="_blank" rel="noopener">X</a></nav>
   </div>
-  <p class="disc">© 2026 Tilt. Tilt is a non-custodial interface. Swaps are routed by Jupiter and deposits are held in Jupiter Lend, both third-party Solana programs. Memecoins are extremely volatile and can lose most or all of their value. Lending rates change and are never guaranteed. Smart contracts can fail. Only trade what you can afford to lose.</p>
+  <p class="disc">© 2026 Fulcrum. Fulcrum is a non-custodial interface. Swaps are routed by Jupiter and deposits are held in Jupiter Lend, both third-party Solana programs. Memecoins are extremely volatile and can lose most or all of their value. Lending rates change and are never guaranteed. Smart contracts can fail. Only trade what you can afford to lose.</p>
 </footer>
 
 <div class="modal" id="m-wallet" hidden>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="mw-t">
-    <div class="sheet-h"><h3 id="mw-t">Connect a wallet</h3><button class="x" type="button" data-close aria-label="Close"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 1l12 12M13 1L1 13" stroke="#0E1014" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>
+    <div class="sheet-h"><h3 id="mw-t">Connect a wallet</h3><button class="x" type="button" data-close aria-label="Close"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 1l12 12M13 1L1 13" stroke="#0E1014" stroke-width="1.8" stroke-linecap="butt"/></svg></button></div>
     <div id="mw-body"></div>
     <div class="err" id="mw-err" role="alert"></div>
   </div>
@@ -590,7 +661,7 @@ footer{padding-block:56px 64px}
 
 <div class="modal" id="m-lend" hidden>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="ml-t">
-    <div class="sheet-h"><h3 id="ml-t">Deposit</h3><button class="x" type="button" data-close aria-label="Close"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 1l12 12M13 1L1 13" stroke="#0E1014" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>
+    <div class="sheet-h"><h3 id="ml-t">Deposit</h3><button class="x" type="button" data-close aria-label="Close"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 1l12 12M13 1L1 13" stroke="#0E1014" stroke-width="1.8" stroke-linecap="butt"/></svg></button></div>
     <div class="seg" id="ml-seg" data-side="long" style="margin-bottom:14px"><span class="pill" aria-hidden="true"></span><button type="button" aria-pressed="true" data-side="long">Deposit</button><button type="button" aria-pressed="false" data-side="short">Withdraw</button></div>
     <div class="field">
       <label for="ml-amt"><span>Amount</span><button type="button" class="balink" id="ml-max"></button></label>
@@ -642,7 +713,7 @@ const b64ToBytes = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
 const bytesToB64 = b => { let s = ''; for (let i = 0; i < b.length; i += 0x8000) s += String.fromCharCode.apply(null, b.subarray(i, i + 0x8000)); return btoa(s); };
 const B58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
 const bs58 = b => { let n = 0n; for (const x of b) n = n * 256n + BigInt(x); let s = ''; while (n > 0n) { s = B58[Number(n % 58n)] + s; n /= 58n; } for (const x of b) { if (x) break; s = '1' + s; } return s; };
-const ctx2 = c => { const dpr = Math.min(2, devicePixelRatio || 1), W0 = c.clientWidth, H = c.clientHeight; if (c.width !== Math.round(W0 * dpr) || c.height !== Math.round(H * dpr)) { c.width = Math.round(W0 * dpr); c.height = Math.round(H * dpr); } const x = c.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); return [x, W0, H]; };
+const PIX = .5; const ctx2 = c => { const W0 = c.clientWidth, H = c.clientHeight; if (c.width !== Math.round(W0 * PIX) || c.height !== Math.round(H * PIX)) { c.width = Math.round(W0 * PIX); c.height = Math.round(H * PIX); } const x = c.getContext('2d'); x.setTransform(PIX, 0, 0, PIX, 0, 0); x.imageSmoothingEnabled = false; return [x, W0, H]; };
 const jget = async (path, opt = {}) => { const h = { ...(opt.headers || {}) }; if (JUP_KEY) h['x-api-key'] = JUP_KEY; const r = await fetch(JUP + path, { ...opt, headers: h }); const t = await r.text(); let j; try { j = JSON.parse(t); } catch (e) { j = { error: t }; } if (!r.ok) { const e = new Error(r.status === 429 ? 'Jupiter is rate limiting requests. Wait a few seconds and try again.' : (j.error || j.message || 'Request failed (' + r.status + ')')); e.status = r.status; throw e; } return j; };
 const jpost = (path, body) => jget(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
 const rpc = async (method, params) => { const r = await fetch(RPC, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }) }); const j = await r.json(); if (j.error) throw new Error(j.error.message); return j.result; };
@@ -717,8 +788,8 @@ function drawW() {
   const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, col + '2a'); g.addColorStop(1, col + '00');
   x.beginPath(); for (let i = 0; i <= upTo; i++) i ? x.lineTo(X(i), Y(d[i].c)) : x.moveTo(X(i), Y(d[i].c)); x.lineTo(X(upTo), H - 18); x.lineTo(X(0), H - 18); x.closePath(); x.fillStyle = g; x.fill();
   x.beginPath(); for (let i = 0; i <= upTo; i++) i ? x.lineTo(X(i), Y(d[i].c)) : x.moveTo(X(i), Y(d[i].c)); x.strokeStyle = col; x.lineWidth = 2; x.lineJoin = 'round'; x.stroke();
-  const ex = X(upTo), ey = Y(d[upTo].c); x.fillStyle = col + '33'; x.beginPath(); x.arc(ex, ey, 7, 0, 7); x.fill(); x.fillStyle = col; x.beginPath(); x.arc(ex, ey, 3.5, 0, 7); x.fill();
-  x.font = '11px "Geist Mono", ui-monospace, monospace'; x.fillStyle = C.muted; x.textAlign = 'left'; x.fillText(timeStr(d[0].t), 4, H - 3); x.textAlign = 'right'; x.fillText(timeStr(d[n - 1].t) + ' · 5m', W0 - 4, H - 3);
+  const ex = X(upTo), ey = Y(d[upTo].c); x.fillStyle = col + '33'; x.fillRect(ex - 8, ey - 8, 16, 16); x.fillStyle = col; x.fillRect(ex - 4, ey - 4, 8, 8);
+  x.font = '16px Silkscreen, monospace'; x.fillStyle = C.muted; x.textAlign = 'left'; x.fillText(timeStr(d[0].t), 4, H - 3); x.textAlign = 'right'; x.fillText(timeStr(d[n - 1].t) + ' · 5m', W0 - 4, H - 3);
 }
 
 /* ---------- quotes + swaps (Jupiter Swap API v2) ---------- */
@@ -820,7 +891,7 @@ async function pickLeaders() {
 }
 function candles(c, d, t) {
   const [x, W0, H] = ctx2(c); x.clearRect(0, 0, W0, H);
-  if (!d || d.length < 2) { x.fillStyle = C.paper; x.fillRect(0, 0, W0, H); x.fillStyle = C.muted; x.font = '13px Geist, system-ui, sans-serif'; x.textAlign = 'center'; x.fillText(d ? 'Hourly chart unavailable right now' : 'Loading hourly candles…', W0 / 2, H / 2); return; }
+  if (!d || d.length < 2) { x.fillStyle = C.paper; x.fillRect(0, 0, W0, H); x.fillStyle = C.muted; x.font = '16px Silkscreen, monospace'; x.textAlign = 'center'; x.fillText(d ? 'Hourly chart unavailable right now' : 'Loading hourly candles…', W0 / 2, H / 2); return; }
   const n = d.length, cw = W0 / n, lo = Math.min(...d.map(k => k.l)), hi = Math.max(...d.map(k => k.h)), sp = (hi - lo) || 1, Y = q => 8 + (1 - (q - lo) / sp) * (H - 16);
   const show = Math.min(n, Math.floor(t * n) + 1);
   for (let i = 0; i < show; i++) {
@@ -840,7 +911,7 @@ onSee($('#c-long'), () => { cardsSeen = true; drawCards(true); });
 
 /* ---------- flow dots ---------- */
 const dotsG = $('#dots'), dots = [];
-['#p1', '#p2', '#p3'].forEach((s, k) => { const p = $(s), m = k === 2 ? 5 : 4; for (let i = 0; i < m; i++) { const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); c.setAttribute('r', k === 2 ? 4 : 5); c.setAttribute('fill', [C.lend, C.long, C.long][k]); dotsG.appendChild(c); dots.push({ p, c, o: i / m, sp: k === 2 ? .12 : .22, L: p.getTotalLength() }); } });
+['#p1', '#p2', '#p3'].forEach((s, k) => { const p = $(s), m = k === 2 ? 5 : 4; for (let i = 0; i < m; i++) { const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); c.setAttribute('r', k === 2 ? 4 : 5); c.setAttribute('shape-rendering','crispEdges'); c.setAttribute('fill', [C.lend, C.long, C.long][k]); dotsG.appendChild(c); dots.push({ p, c, o: i / m, sp: k === 2 ? .12 : .22, L: p.getTotalLength() }); } });
 function flow(now) { const t = now / 1000; dots.forEach(d => { const u = (d.o + t * d.sp) % 1, pt = d.p.getPointAtLength(u * d.L); d.c.setAttribute('cx', pt.x); d.c.setAttribute('cy', pt.y); d.c.setAttribute('opacity', Math.sin(u * Math.PI)); }); if (!RM) requestAnimationFrame(flow); }
 requestAnimationFrame(flow);
 
@@ -938,7 +1009,7 @@ function drawP(amt, L, m, lq, p) {
   const [x, W0, H] = ctx2($('#p-chart')); x.clearRect(0, 0, W0, H);
   const pad = { l: 62, r: 24, t: 14, b: 28 }, iw = W0 - pad.l - pad.r, ih = H - pad.t - pad.b;
   const maxV = Math.max(amt * L * .5, amt) * 1.05, X = v => pad.l + (v + 50) / 100 * iw, Y = v => pad.t + ih / 2 - v / maxV * ih / 2;
-  x.font = '11.5px "Geist Mono", ui-monospace, monospace'; x.textBaseline = 'middle';
+  x.font = '16px Silkscreen, monospace'; x.textBaseline = 'middle';
   [-1, -.5, 0, .5, 1].forEach(f => { const v = f * maxV, y = Math.round(Y(v)) + .5; x.strokeStyle = f === 0 ? '#C9CED6' : C.line; x.lineWidth = 1; x.beginPath(); x.moveTo(pad.l, y); x.lineTo(W0 - pad.r, y); x.stroke(); x.fillStyle = C.muted; x.textAlign = 'right'; x.fillText(sMoney(Math.round(v)), pad.l - 8, y); });
   x.textAlign = 'center'; x.textBaseline = 'alphabetic'; [-50, -25, 0, 25, 50].forEach(v => { x.fillStyle = C.muted; x.fillText(v === 0 && p ? fmtP(p) : (v > 0 ? '+' : '') + v + '%', X(v), H - 8); });
   if (lq != null && lq >= -50 && lq <= 50) { x.fillStyle = 'rgba(224,70,75,.07)'; if (pside === 'long') x.fillRect(X(-50), pad.t, X(lq) - X(-50), ih); else x.fillRect(X(lq), pad.t, X(50) - X(lq), ih); x.setLineDash([4, 4]); x.strokeStyle = C.short; x.beginPath(); x.moveTo(X(lq), pad.t); x.lineTo(X(lq), pad.t + ih); x.stroke(); x.setLineDash([]); x.fillStyle = C.short; x.textAlign = pside === 'long' ? 'left' : 'right'; x.fillText('liquidation', X(lq) + (pside === 'long' ? 6 : -6), pad.t + 12); }
@@ -951,7 +1022,7 @@ function drawP(amt, L, m, lq, p) {
   });
   const cx = X(m), cy = Y(pnlAt(m, amt, L, pside));
   x.strokeStyle = C.ink; x.setLineDash([2, 3]); x.beginPath(); x.moveTo(cx, pad.t); x.lineTo(cx, pad.t + ih); x.stroke(); x.setLineDash([]);
-  x.fillStyle = '#fff'; x.beginPath(); x.arc(cx, cy, 6.5, 0, 7); x.fill(); x.strokeStyle = C.ink; x.lineWidth = 2; x.stroke();
+  x.fillStyle = C.ink; x.fillRect(cx - 8, cy - 8, 16, 16); x.fillStyle = '#fff'; x.fillRect(cx - 4, cy - 4, 8, 8);
 }
 
 /* ---------- feature cards ---------- */
@@ -978,7 +1049,7 @@ function renderDash() {
 (function () {
   const c = $('#cta-c'), t0 = performance.now(); let vis = false;
   const f = now => { const [x, W0, H] = ctx2(c); x.clearRect(0, 0, W0, H); const t = (now - t0) / 1000, s = 22;
-    for (let y = s / 2; y < H; y += s) for (let xx = s / 2; xx < W0; xx += s) { const d = Math.hypot(xx - W0 / 2, y - H * 1.1) / Math.max(W0, H), w = Math.sin(d * 14 - t * 1.2) * .5 + .5, r = 1 + w * 3.2 * (1 - Math.min(1, d)); x.fillStyle = 'rgba(255,255,255,' + (.18 + w * .3) + ')'; x.beginPath(); x.arc(xx, y, r, 0, 7); x.fill(); }
+    for (let y = s / 2; y < H; y += s) for (let xx = s / 2; xx < W0; xx += s) { const d = Math.hypot(xx - W0 / 2, y - H * 1.1) / Math.max(W0, H), w = Math.sin(d * 14 - t * 1.2) * .5 + .5, r = 1 + w * 3.2 * (1 - Math.min(1, d)); x.fillStyle = 'rgba(255,255,255,' + (.18 + w * .3) + ')'; const q = Math.round(r) * 2; x.fillRect(Math.round(xx - q / 2), Math.round(y - q / 2), q, q); }
     if (!RM && vis) requestAnimationFrame(f); };
   if ('IntersectionObserver' in window) new IntersectionObserver(es => { const was = vis; vis = es[0].isIntersecting; if (vis && !was) requestAnimationFrame(f); }).observe(c);
   requestAnimationFrame(f);

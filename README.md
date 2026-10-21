@@ -1,12 +1,12 @@
-# Tilt
+# Fulcrum
 
-Pick a side. Tilt is a clean, non-custodial front end for Solana memecoins.
+Pick a side. Fulcrum is a clean, non-custodial front end for Solana memecoins.
 
 - **Trade:** buy and sell BONK, WIF, POPCAT, PENGU, FARTCOIN, PNUT and BOME at the best price, routed through the Jupiter Swap API.
 - **Earn:** deposit USDC, SOL and other assets into Jupiter Lend vaults at live rates, and withdraw any time liquidity allows.
 - **Calculator:** see how leveraged longs and shorts would play out from today's live price. Leverage is not live yet.
 
-Your wallet signs every transaction. Tilt never holds funds.
+Your wallet signs every transaction. Fulcrum never holds funds.
 
 ## Run it
 
